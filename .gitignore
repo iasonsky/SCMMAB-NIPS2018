@@ -1,0 +1,32 @@
+# Python bytecode
+npsem/__pycache__/__init__.cpython-311.pyc
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# UV specific
+uv.lock
+
+# Environment files
+.python-version
+.env
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
