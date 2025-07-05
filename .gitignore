@@ -30,3 +30,7 @@ build/
 .idea/
 *.swp
 *.swo
+
+bandit_results/
+*.err
+*.out
