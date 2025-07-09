@@ -31,4 +31,5 @@ build/
 *.swo
 
 bandit_results/
-*.err*.out
+*.err
+*.out
