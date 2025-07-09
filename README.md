@@ -7,6 +7,11 @@ We provide codebase to allow readers to reproduce our experiments. This code als
 The code is tested with the following configuration: `python=3.9`, `numpy=1.21.2`, `scipy=1.7.1`, `joblib=1.0.1`, `matplotlib=3.4.3`, `seaborn=0.11.2`, and `networkx=2.6.3`, on
 Linux and MacOS machines.
 
+## Getting Started
+
+For full environment setup instructions, see
+[snellius_uv_setup.md](snellius_uv_setup.md).
+
 
 Please run the following command to perform experiments (which will use 3/4 of CPU cores on the machine):
 > `python3 -m npsem.NIPS2018POMIS_exp.test_bandit_strategies`
