@@ -1,3 +1,5 @@
+"""General utility functions used throughout the project."""
+
 from itertools import combinations as itercomb, chain
 
 import numpy as np

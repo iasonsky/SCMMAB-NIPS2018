@@ -1,3 +1,12 @@
+"""Multi-armed bandit utilities used in the POMIS experiments.
+
+This module provides a thin wrapper around two classical bandit algorithms,
+KL-UCB and Thompson Sampling, which are used throughout the repository to
+evaluate different arm selection strategies.  Functions return the sequence of
+selected arms together with the obtained rewards so that they can easily be
+analysed afterwards.
+"""
+
 import numpy as np
 from joblib import Parallel, delayed
 from numpy.random.mtrand import beta
@@ -77,7 +86,36 @@ def default_kl_UCB_func(t, value_at_small_t=1):
 
 
 def kl_UCB(T: int, mu, f=None, seed=None, faster=True, prior_SF=None, **_kwargs):
-    """Bernoulli kl-UCB"""
+    """Run the KL-UCB algorithm on Bernoulli bandits.
+
+    Parameters
+    ----------
+    T : int
+        Horizon of the bandit run.
+    mu : Sequence[float]
+        Success probabilities of each arm.
+    f : callable, optional
+        Exploration rate function ``f(t)``.  If ``None`` the default from
+        :func:`default_kl_UCB_func` is used.
+    seed : int, optional
+        Seed for the pseudo random number generator.
+    faster : bool, default ``True``
+        Whether to use cached look-ahead values for efficiency when many arms
+        are present.
+    prior_SF : tuple of arrays, optional
+        Prior successes and failures for each arm.
+
+    Returns
+    -------
+    Tuple[np.ndarray, np.ndarray]
+        Arrays of selected arms and obtained rewards.
+
+    Examples
+    --------
+    >>> arms, rewards = kl_UCB(1000, [0.1, 0.8], seed=0)
+    >>> len(arms), len(rewards)
+    (1000, 1000)
+    """
     if f is None:
         f = default_kl_UCB_func
 
@@ -130,7 +168,24 @@ def kl_UCB(T: int, mu, f=None, seed=None, faster=True, prior_SF=None, **_kwargs)
 
 
 def thompson_sampling(T: int, mu, seed=None, prior_SF=None, **_kwargs):
-    """ Bernoulli Thompson Sampling with known mu"""
+    """Run Bernoulli Thompson Sampling.
+
+    Parameters
+    ----------
+    T : int
+        Horizon of the bandit run.
+    mu : Sequence[float]
+        True arm success probabilities.
+    seed : int, optional
+        Seed for the pseudo random number generator.
+    prior_SF : tuple of arrays, optional
+        Prior successes and failures for each arm.
+
+    Returns
+    -------
+    Tuple[np.ndarray, np.ndarray]
+        Arrays of selected arms and obtained rewards.
+    """
     K_ = len(mu)
     S, F, theta = np.zeros((K_,)), np.zeros((K_,)), np.zeros((K_,))
     if prior_SF is not None:

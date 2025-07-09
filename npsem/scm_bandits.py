@@ -1,3 +1,5 @@
+"""Helpers for turning structural causal models into bandit problems."""
+
 from itertools import product
 
 from typing import Dict, Tuple, Union, Any
@@ -8,6 +10,22 @@ from npsem.where_do import POMISs, MISs
 
 
 def SCM_to_bandit_machine(M: StructuralCausalModel, Y='Y') -> Tuple[Tuple, Dict[Union[int, Any], Dict]]:
+    """Convert an SCM into a set of bandit arms.
+
+    Parameters
+    ----------
+    M : StructuralCausalModel
+        Model from which expected rewards are computed.
+    Y : str, default ``'Y'``
+        Outcome variable used as reward.
+
+    Returns
+    -------
+    mu : tuple
+        Expected reward of each arm.
+    arm_setting : dict
+        Mapping from arm index to intervention dictionary.
+    """
     G = M.G
     mu_arm = list()
     arm_setting = dict()
@@ -30,6 +48,7 @@ def arm_types():
 
 
 def arms_of(arm_type: str, arm_setting, G, Y) -> Tuple[int, ...]:
+    """Return the indices of arms of a given type."""
     if arm_type == 'POMIS':
         return pomis_arms_of(arm_setting, G, Y)
     elif arm_type == 'All-at-once':
@@ -42,15 +61,18 @@ def arms_of(arm_type: str, arm_setting, G, Y) -> Tuple[int, ...]:
 
 
 def pomis_arms_of(arm_setting, G, Y):
+    """Indices of arms that correspond to POMIS interventions."""
     pomiss = POMISs(G, Y)
     return tuple(arm_x for arm_x in range(len(arm_setting)) if set(arm_setting[arm_x]) in pomiss)
 
 
 def mis_arms_of(arm_setting, G, Y):
+    """Indices of arms that correspond to MIS interventions."""
     miss = MISs(G, Y)
     return tuple(arm_x for arm_x in range(len(arm_setting)) if set(arm_setting[arm_x]) in miss)
 
 
 def controlphil_arms_of(arm_setting, G, Y):
+    """Index of the arm that intervenes on all variables at once."""
     intervenable = G.V - {Y}
     return tuple(arm_x for arm_x in range(len(arm_setting)) if arm_setting[arm_x].keys() == intervenable)
