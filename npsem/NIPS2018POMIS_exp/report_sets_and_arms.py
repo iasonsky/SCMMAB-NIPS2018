@@ -1,3 +1,16 @@
+"""List MISs, POMISs and associated arm counts for several graphs.
+
+Run this file to print the number of intervention sets (ISs), minimally
+intervenable sets (MISs) and partially observable MISs (POMISs) along with the
+corresponding number of bandit arms required.
+
+Usage
+-----
+```
+python -m npsem.NIPS2018POMIS_exp.report_sets_and_arms
+```
+"""
+
 from npsem.NIPS2018POMIS_exp.scm_examples import XYZWST, simple_markovian, IV_CD
 from npsem.utils import combinations
 from npsem.where_do import MISs, POMISs

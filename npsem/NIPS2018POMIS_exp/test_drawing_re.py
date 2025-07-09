@@ -1,3 +1,16 @@
+"""Create aggregate plots from saved bandit experiment results.
+
+Run this module after ``test_bandit_strategies.py`` has produced result files in
+``bandit_results``.  Executing the script generates ``aggregate.pdf`` in the
+current directory.
+
+Usage
+-----
+```
+python -m npsem.NIPS2018POMIS_exp.test_drawing_re
+```
+"""
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np

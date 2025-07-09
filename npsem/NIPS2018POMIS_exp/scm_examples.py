@@ -1,3 +1,11 @@
+"""Example causal diagrams and structural causal models used in experiments.
+
+This module is typically imported by other scripts.  It defines a variety of
+helper functions such as :func:`IV_SCM` or :func:`XYZWST_SCM` that construct
+example causal graphs and their corresponding SCMs.  The module is not intended
+to be executed directly from the command line.
+"""
+
 from collections import defaultdict
 
 from npsem.model import CausalDiagram, StructuralCausalModel, default_P_U

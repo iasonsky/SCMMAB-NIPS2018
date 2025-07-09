@@ -1,3 +1,15 @@
+"""Report expected rewards of interventions for several example SCMs.
+
+Run the script directly to print a table of mean rewards for all combinations
+of binary interventions in each model.
+
+Usage
+-----
+```
+python -m npsem.NIPS2018POMIS_exp.report_mean_rewards
+```
+"""
+
 from itertools import product
 
 from npsem.NIPS2018POMIS_exp.scm_examples import IV_SCM, simple_markovian_SCM, XYZWST_SCM
