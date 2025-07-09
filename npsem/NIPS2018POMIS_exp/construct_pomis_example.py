@@ -1,3 +1,15 @@
+"""Demonstration for constructing a POMIS SCM with an empty ``W`` set.
+
+Run this module directly to generate a simple SCM using the ``XYZWST``
+example causal graph and print the result of querying the model.
+
+Example
+-------
+```
+python -m npsem.NIPS2018POMIS_exp.construct_pomis_example
+```
+"""
+
 from npsem.NIPS2018POMIS_exp.construct_pomis import construct_SCM_for_POMIS_empty_W
 from npsem.NIPS2018POMIS_exp.scm_examples import XYZWST
 from npsem.where_do import MUCT_IB

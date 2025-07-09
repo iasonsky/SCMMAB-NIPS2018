@@ -1,3 +1,16 @@
+"""Run simulated bandit experiments on example SCMs.
+
+Executing this module launches a suite of Thompson Sampling and UCB
+experiments for different arm-selection strategies.  Results are stored under
+``bandit_results/<name>`` where ``<name>`` corresponds to the SCM tested.
+
+Example
+-------
+```
+python -m npsem.NIPS2018POMIS_exp.test_bandit_strategies
+```
+"""
+
 import multiprocessing
 import numpy as np
 import os

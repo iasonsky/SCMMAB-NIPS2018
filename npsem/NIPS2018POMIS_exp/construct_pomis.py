@@ -1,3 +1,11 @@
+"""Utilities for constructing SCMs tailored to partial observability settings.
+
+This module implements :func:`construct_SCM_for_POMIS_empty_W` which is used in
+the experiments to build an SCM for a given causal diagram.  It is meant to be
+imported by other scripts and does not provide a stand-alone command-line
+interface.
+"""
+
 from typing import AbstractSet
 
 from npsem.model import StructuralCausalModel, CausalDiagram
