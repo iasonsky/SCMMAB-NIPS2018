@@ -1,3 +1,11 @@
+"""Utilities for causal diagrams and structural causal models.
+
+This module defines :class:`CausalDiagram` for representing causal graphs with
+possible unobserved confounders and :class:`StructuralCausalModel` which
+implements Pearl's functional model semantics.  It contains helper routines for
+querying interventional distributions that are used by the bandit experiments.
+"""
+
 import itertools
 from collections import defaultdict
 from itertools import product
@@ -53,6 +61,13 @@ def wrap(v_or_vs, wrap_with=frozenset):
 
 
 class CausalDiagram:
+    """Representation of a causal diagram with optional confounders.
+
+    The class stores directed and bidirected edges and provides convenience
+    methods for graph-theoretic queries such as ancestors, descendants and
+    performing ``do``-interventions.  Instances of this class are immutable and
+    can be copied with interventions applied.
+    """
     def __init__(self,
                  vs: Optional[Iterable[str]],
                  directed_edges: Optional[Iterable[Tuple[str, str]]] = frozenset(),
@@ -426,6 +441,21 @@ class CausalDiagram:
 
 
 class StructuralCausalModel:
+    """Functional causal model associated with a :class:`CausalDiagram`.
+
+    Parameters
+    ----------
+    G : CausalDiagram
+        Underlying causal diagram describing variable relationships.
+    F : dict[str, callable]
+        Structural assignments mapping a variable to a function of its parents.
+    P_U : callable
+        Distribution over the exogenous variables ``U``.
+    D : dict, optional
+        Domain of each variable.  Defaults to ``{var: (0, 1)}``.
+    more_U : Iterable[str], optional
+        Additional unobserved variables used in ``F``.
+    """
     def __init__(self, G: CausalDiagram, F=None, P_U=None, D=None, more_U=None):
         self.G = G
         self.F = F
