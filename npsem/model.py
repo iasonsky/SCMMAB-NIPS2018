@@ -74,14 +74,17 @@ class CausalDiagram:
                  bidirected_edges: Optional[Iterable[Tuple[str, str, str]]] = frozenset(),
                  copy: 'CausalDiagram' = None,
                  with_do: Optional[Set[str]] = None,
-                 with_induced: Optional[Set[str]] = None):
+                 with_induced: Optional[Set[str]] = None,
+                 manipulable_vars: Optional[Set[str]] = None):
         with_do = wrap(with_do)
         with_induced = wrap(with_induced)
+        manipulable_vars = wrap(manipulable_vars)
         if copy is not None:
             if with_do is not None:
                 self.V = copy.V
                 self.U = wrap(u for u in copy.U if with_do.isdisjoint(copy.confounded_dict[u]))
                 self.confounded_dict = {u: val for u, val in copy.confounded_dict.items() if u in self.U}
+                self.manipulable_vars = copy.manipulable_vars
 
                 # copy cautiously
                 dopa = copy.pa(with_do)
@@ -99,6 +102,7 @@ class CausalDiagram:
                 self.V = with_induced
                 self.confounded_dict = {u: val for u, val in copy.confounded_dict.items() if val <= self.V}
                 self.U = wrap(self.confounded_dict)
+                self.manipulable_vars = copy.manipulable_vars & self.V
 
                 children_are_removed = copy.pa(removed) & self.V
                 parents_are_removed = copy.ch(removed) & self.V
@@ -113,6 +117,7 @@ class CausalDiagram:
                 self.V = copy.V
                 self.U = copy.U
                 self.confounded_dict = copy.confounded_dict
+                self.manipulable_vars = copy.manipulable_vars
                 self._ch = copy._ch
                 self._pa = copy._pa
                 self._an = copy._an
@@ -124,6 +129,8 @@ class CausalDiagram:
             self.U = frozenset(u for _, _, u in bidirected_edges)
             self.confounded_dict = {u: frozenset({x, y}) for x, y, u in
                                     bidirected_edges}
+            # If manipulable_vars is None, all variables are manipulable by default
+            self.manipulable_vars = manipulable_vars if manipulable_vars is not None else self.V
 
             self._ch = pairs2dict(directed_edges)
             self._pa = pairs2dict(directed_edges, backward=True)
@@ -147,6 +154,10 @@ class CausalDiagram:
 
     def UCs(self, v):
         return self.u_pas[v]
+
+    def is_manipulable(self, v):
+        """Check if a variable is manipulable (can be intervened on)."""
+        return v in self.manipulable_vars
 
     def __contains__(self, item):
         if isinstance(item, str):
@@ -512,7 +523,7 @@ class StructuralCausalModel:
             return defaultdict(lambda: np.nan)  # nan or 0?
 
 
-def quick_causal_diagram(paths, bidirectedpaths=None):
+def quick_causal_diagram(paths, bidirectedpaths=None, manipulable_vars=None):
     if bidirectedpaths is None:
         bidirectedpaths = []
     dir_edges = []
@@ -525,7 +536,7 @@ def quick_causal_diagram(paths, bidirectedpaths=None):
         for x, y in zip(path, path[1:]):
             bidir_edges.append((x, y, 'U' + str(u_count)))
             u_count += 1
-    return CausalDiagram(set(), dir_edges, bidir_edges)
+    return CausalDiagram(set(), dir_edges, bidir_edges, manipulable_vars=manipulable_vars)
 
 
 qcd = quick_causal_diagram

@@ -30,7 +30,9 @@ def SCM_to_bandit_machine(M: StructuralCausalModel, Y='Y') -> Tuple[Tuple, Dict[
     mu_arm = list()
     arm_setting = dict()
     arm_id = 0
-    all_subsets = list(combinations(sorted(G.V - {Y})))
+    # Only consider manipulable variables (excluding the reward variable Y)
+    manipulable_vars = G.manipulable_vars - {Y}
+    all_subsets = list(combinations(sorted(manipulable_vars)))
     for subset in all_subsets:
         for values in product(*[M.D[variable] for variable in subset]):
             arm_setting[arm_id] = dict(zip(subset, values))
@@ -73,6 +75,6 @@ def mis_arms_of(arm_setting, G, Y):
 
 
 def controlphil_arms_of(arm_setting, G, Y):
-    """Index of the arm that intervenes on all variables at once."""
-    intervenable = G.V - {Y}
+    """Index of the arm that intervenes on all manipulable variables at once."""
+    intervenable = G.manipulable_vars - {Y}
     return tuple(arm_x for arm_x in range(len(arm_setting)) if arm_setting[arm_x].keys() == intervenable)

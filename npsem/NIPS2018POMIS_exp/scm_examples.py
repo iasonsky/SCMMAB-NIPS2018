@@ -12,10 +12,10 @@ from npsem.model import CausalDiagram, StructuralCausalModel, default_P_U
 from npsem.utils import rand_bw, seeded
 
 
-def IV_CD(uname='U_XY'):
+def IV_CD(uname='U_XY', manipulable_vars=None):
     """ Instrumental Variable Causal Diagram """
     X, Y, Z = 'X', 'Y', 'Z'
-    return CausalDiagram({X, Y, Z}, [(Z, X), (X, Y)], [(X, Y, uname)])
+    return CausalDiagram({X, Y, Z}, [(Z, X), (X, Y)], [(X, Y, uname)], manipulable_vars=manipulable_vars)
 
 
 def IV_SCM(devised=True, seed=None):
@@ -51,13 +51,13 @@ def IV_SCM(devised=True, seed=None):
         return M, mu1
 
 
-def XYZWST(u_wx='U0', u_yz='U1'):
+def XYZWST(u_wx='U0', u_yz='U1', manipulable_vars=None):
     W, X, Y, Z, S, T = 'W', 'X', 'Y', 'Z', 'S', 'T'
-    return CausalDiagram({'W', 'X', 'Y', 'Z', 'S', 'T'}, [(Z, X), (X, Y), (W, Y), (S, W), (T, X), (T, Y)], [(X, W, u_wx), (Z, Y, u_yz)])
+    return CausalDiagram({'W', 'X', 'Y', 'Z', 'S', 'T'}, [(Z, X), (X, Y), (W, Y), (S, W), (T, X), (T, Y)], [(X, W, u_wx), (Z, Y, u_yz)], manipulable_vars=manipulable_vars)
 
 
-def XYZW(u_wx='U0', u_yz='U1'):
-    return XYZWST(u_wx, u_yz) - {'S', 'T'}
+def XYZW(u_wx='U0', u_yz='U1', manipulable_vars=None):
+    return XYZWST(u_wx, u_yz, manipulable_vars) - {'S', 'T'}
 
 
 def XYZW_SCM(devised=True, seed=None):
@@ -142,9 +142,9 @@ def XYZWST_SCM(devised=True, seed=None):
         return M, mu1
 
 
-def simple_markovian():
+def simple_markovian(manipulable_vars=None):
     X1, X2, Y, Z1, Z2 = 'X1', 'X2', 'Y', 'Z1', 'Z2'
-    return CausalDiagram({'X1', 'X2', 'Y', 'Z1', 'Z2'}, [(X1, Y), (X2, Y), (Z1, X1), (Z1, X2), (Z2, X1), (Z2, X2)])
+    return CausalDiagram({'X1', 'X2', 'Y', 'Z1', 'Z2'}, [(X1, Y), (X2, Y), (Z1, X1), (Z1, X2), (Z2, X1), (Z2, X2)], manipulable_vars=manipulable_vars)
 
 
 def simple_markovian_SCM(seed=None) -> [StructuralCausalModel, dict]:

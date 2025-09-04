@@ -32,7 +32,8 @@ def MISs(G: CausalDiagram, Y: str) -> FrozenSet[FrozenSet[str]]:
     FrozenSet[FrozenSet[str]]
         Collection of all MISs represented as frozensets of variable names.
     """
-    II = G.V - {Y}
+    # Only consider manipulable variables (excluding the reward variable Y)
+    II = G.manipulable_vars - {Y}
     assert II <= G.V
     assert Y not in II
 
@@ -54,8 +55,10 @@ def subMISs(G: CausalDiagram, Y: str, Xs: FrozenSet[str], Ws: List[str]) -> Froz
 
 def bruteforce_POMISs(G: CausalDiagram, Y: str) -> FrozenSet[FrozenSet[str]]:
     """Compute all POMISs by exhaustive search."""
+    # Only consider manipulable variables (excluding the reward variable Y)
+    manipulable_vars = G.manipulable_vars - {Y}
     return frozenset({frozenset(IB(G.do(Ws), Y))
-                      for Ws in combinations(list(G.V - {Y}))})
+                      for Ws in combinations(list(manipulable_vars))})
 
 
 def MUCT(G: CausalDiagram, Y: str) -> FrozenSet[str]:
