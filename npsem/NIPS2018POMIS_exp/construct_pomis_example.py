@@ -14,7 +14,7 @@ from npsem.NIPS2018POMIS_exp.construct_pomis import construct_SCM_for_POMIS_empt
 from npsem.NIPS2018POMIS_exp.scm_examples import XYZWST
 from npsem.where_do import MUCT_IB
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     G = XYZWST()
     Y = G.causal_order(backward=True)[0]
     G = G[G.An(Y)]

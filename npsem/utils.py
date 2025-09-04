@@ -5,9 +5,18 @@ from itertools import combinations as itercomb, chain
 import numpy as np
 import os
 from contextlib import contextmanager
-from typing import Iterable, TypeVar, Generator, Tuple, Set, List, FrozenSet, AbstractSet
+from typing import (
+    Iterable,
+    TypeVar,
+    Generator,
+    Tuple,
+    Set,
+    List,
+    FrozenSet,
+    AbstractSet,
+)
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def dict_or(d1: dict, d2: dict) -> dict:
@@ -112,7 +121,7 @@ def shuffled(xs: Iterable[T]) -> List[T]:
 
 
 def combinations(xs: Iterable[T]) -> Generator[Tuple[T, ...], None, None]:
-    """ all combinations of given in the order of increasing its size """
+    """all combinations of given in the order of increasing its size"""
     xs = list(xs)
     for i in range(len(xs) + 1):
         for comb in itercomb(xs, i):

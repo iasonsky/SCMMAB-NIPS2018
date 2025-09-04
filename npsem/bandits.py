@@ -17,7 +17,7 @@ from npsem.utils import seeded, rand_argmax, with_default
 
 
 def KL(mu_x, mu_star, epsilon=1e-12):
-    """ Kullback-Leibler Divergence with two parameters from two Bernoulli distributions """
+    """Kullback-Leibler Divergence with two parameters from two Bernoulli distributions"""
     if mu_x == mu_star:
         return 0
 
@@ -30,11 +30,13 @@ def KL(mu_x, mu_star, epsilon=1e-12):
         elif mu_x == 1:
             return np.log(1 / mu_star)
 
-    return mu_x * np.log((mu_x + epsilon) / (mu_star + epsilon)) + (1 - mu_x) * np.log((1 - mu_x + epsilon) / (1 - mu_star + epsilon))
+    return mu_x * np.log((mu_x + epsilon) / (mu_star + epsilon)) + (1 - mu_x) * np.log(
+        (1 - mu_x + epsilon) / (1 - mu_star + epsilon)
+    )
 
 
 def sup_KL(mu_ref, divergence, lower=None):
-    """ Find largest mu that satisfies KL(mu_ref, mu) <= divergence """
+    """Find largest mu that satisfies KL(mu_ref, mu) <= divergence"""
     if divergence <= 0:
         return mu_ref
     if KL(mu_ref, 1.0) <= divergence:
@@ -43,7 +45,7 @@ def sup_KL(mu_ref, divergence, lower=None):
 
 
 class U_keeper:
-    """  Keep look-ahead U values to save unnecessary computation (more effective if there is a large number of arms) """
+    """Keep look-ahead U values to save unnecessary computation (more effective if there is a large number of arms)"""
 
     def __init__(self, K_: int, T: int):
         self.K_ = K_
@@ -63,7 +65,9 @@ class U_keeper:
             if t == 5 * K_:
                 ahead_t = min(t + init_step_size, T)
                 ft2 = f(ahead_t)
-                self.lookahead_U = np.array([sup_KL(mu_hat[i], ft2 / N[i]) for i in range(K_)])
+                self.lookahead_U = np.array(
+                    [sup_KL(mu_hat[i], ft2 / N[i]) for i in range(K_)]
+                )
                 self.lookahead_t = np.ones((len(mu_hat),)) * ahead_t
         else:
             fval = f(t)
@@ -212,13 +216,21 @@ def thompson_sampling(T: int, mu, seed=None, prior_SF=None, **_kwargs):
     return arms_selected, rewards
 
 
-def play_bandits(T: int, mu, algo: str, repeat: int, n_jobs=1) -> Tuple[np.ndarray, np.ndarray]:
-    if algo == 'TS':
-        par_result = Parallel(n_jobs=n_jobs, verbose=100)(delayed(thompson_sampling)(T, mu, seed=trial) for trial in range(repeat))
-    elif algo == 'UCB':
-        par_result = Parallel(n_jobs=n_jobs, verbose=100)(delayed(kl_UCB)(T, mu, seed=trial) for trial in range(repeat))
+def play_bandits(
+    T: int, mu, algo: str, repeat: int, n_jobs=1
+) -> Tuple[np.ndarray, np.ndarray]:
+    if algo == "TS":
+        par_result = Parallel(n_jobs=n_jobs, verbose=100)(
+            delayed(thompson_sampling)(T, mu, seed=trial) for trial in range(repeat)
+        )
+    elif algo == "UCB":
+        par_result = Parallel(n_jobs=n_jobs, verbose=100)(
+            delayed(kl_UCB)(T, mu, seed=trial) for trial in range(repeat)
+        )
     else:
-        raise AssertionError(f'unknown algo: {algo}')
+        raise AssertionError(f"unknown algo: {algo}")
 
-    return (np.vstack(tuple(arms_selected for arms_selected, _ in par_result)),
-            np.vstack(tuple(rewards for _, rewards in par_result)))
+    return (
+        np.vstack(tuple(arms_selected for arms_selected, _ in par_result)),
+        np.vstack(tuple(rewards for _, rewards in par_result)),
+    )

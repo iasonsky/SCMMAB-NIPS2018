@@ -30,12 +30,14 @@ def all_2(xs):
 
 def V_Q_i(v, Q, i):
     try:
-        return v[Q + f'^({i})']
+        return v[Q + f"^({i})"]
     except KeyError:
         return (int(v[Q]) >> (2 * i)) % 4
 
 
-def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: AbstractSet, verbose=False) -> StructuralCausalModel:
+def construct_SCM_for_POMIS_empty_W(
+    G: CausalDiagram, Y, T: AbstractSet, X: AbstractSet, verbose=False
+) -> StructuralCausalModel:
     G = G[T | X]
 
     U_over_MUCT = sorted(G[T].U)
@@ -43,7 +45,7 @@ def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: Abst
     def P_U(d):
         if verbose:
             print()
-            print(f'u={d}')
+            print(f"u={d}")
         prob = pow(0.5, len(U_over_MUCT))
         return prob
 
@@ -62,7 +64,7 @@ def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: Abst
                     return next(iter(red_parents))
                 return int(2)
 
-        func1.__name__ = f'{V_k}^{i}'
+        func1.__name__ = f"{V_k}^{i}"
         return func1
 
     def blue_template(i_, U_i_, V_k, S_i_, T_i_, blue_):
@@ -80,7 +82,7 @@ def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: Abst
                     return next(iter(blue_parents))
                 return int(2)
 
-        func1.__name__ = f'{V_k}^{i}'
+        func1.__name__ = f"{V_k}^{i}"
         return func1
 
     def purple_template(i_, U_i_, V_k, S_i_, T_i_, red_, blue_, purple_):
@@ -98,7 +100,9 @@ def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: Abst
                     red_parents |= {1 - v[U_i_]}
                 if all_1(red_parents) and all_2(purple_parents) and all_0(blue_parents):
                     return int(2)
-                elif all_0(red_parents) and all_1(purple_parents) and all_1(blue_parents):
+                elif (
+                    all_0(red_parents) and all_1(purple_parents) and all_1(blue_parents)
+                ):
                     return int(1)
                 return int(3)
             except KeyError as err:
@@ -110,10 +114,11 @@ def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: Abst
                 print(f"{sorted(v.keys())}")
                 print("==========", flush=True)
                 import time
+
                 time.sleep(1)
                 raise err
 
-        func1.__name__ = f'{V_k}^{i}'
+        func1.__name__ = f"{V_k}^{i}"
         return func1
 
     # coloring
@@ -128,9 +133,9 @@ def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: Abst
         blue = G.De(S_i)
         purple = red & blue
         red, blue = red - purple, blue - purple
-        assert (red | blue)
+        assert red | blue
         if verbose:
-            print(f'{U_i} for ({i}): red={red}, blue={blue}, purple={purple}')
+            print(f"{U_i} for ({i}): red={red}, blue={blue}, purple={purple}")
 
         for V_j in T - (red | blue | purple):
             functions[i][V_j] = lambda v: int(0)
@@ -142,7 +147,9 @@ def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: Abst
             functions[i][V_j] = blue_template(i, U_i, V_j, S_i, T_i, blue)
 
         for V_j in purple:
-            functions[i][V_j] = purple_template(i, U_i, V_j, S_i, T_i, red, blue, purple)
+            functions[i][V_j] = purple_template(
+                i, U_i, V_j, S_i, T_i, red, blue, purple
+            )
     pass
 
     # time to integrate functions
@@ -151,16 +158,16 @@ def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: Abst
         def func00(v):
             summed = 0
             for i0 in range(len(U_over_MUCT)):
-                V_k_i = v[V_k + f'^({i0})'] = functions[i0][V_k](v)
+                V_k_i = v[V_k + f"^({i0})"] = functions[i0][V_k](v)
                 if verbose:
-                    print(f'{V_k}^({i0}) = {functions[i0][V_k](v)}')
+                    print(f"{V_k}^({i0}) = {functions[i0][V_k](v)}")
                 summed += pow(4, i0) * V_k_i
             if V_k != Y:
                 if verbose:
-                    print(f'{V_k}     = {summed}')
+                    print(f"{V_k}     = {summed}")
             return int(summed)
 
-        func00.__name__ = f'{V_k}'
+        func00.__name__ = f"{V_k}"
         return func00
 
     F = dict()
@@ -173,14 +180,17 @@ def construct_SCM_for_POMIS_empty_W(G: CausalDiagram, Y, T: AbstractSet, X: Abst
             def func000(v):
                 y_prime = temp_f(v)
                 if verbose:
-                    print(f"y'    = " + f'{y_prime:b}'.zfill(2 * len(U_over_MUCT)))
-                if all(((y_prime >> 2 * bit_i) & 3) in {1, 2} for bit_i in range(len(U_over_MUCT))):
+                    print("y'    = " + f"{y_prime:b}".zfill(2 * len(U_over_MUCT)))
+                if all(
+                    ((y_prime >> 2 * bit_i) & 3) in {1, 2}
+                    for bit_i in range(len(U_over_MUCT))
+                ):
                     if verbose:
-                        print(f"y     = 1")
+                        print("y     = 1")
                     return int(1)
                 else:
                     if verbose:
-                        print(f"y     = 0")
+                        print("y     = 0")
                     return int(0)
 
             F[V_i] = func000

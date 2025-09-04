@@ -9,7 +9,9 @@ from npsem.utils import combinations
 from npsem.where_do import POMISs, MISs
 
 
-def SCM_to_bandit_machine(M: StructuralCausalModel, Y='Y') -> Tuple[Tuple, Dict[Union[int, Any], Dict]]:
+def SCM_to_bandit_machine(
+    M: StructuralCausalModel, Y="Y"
+) -> Tuple[Tuple, Dict[Union[int, Any], Dict]]:
     """Convert an SCM into a set of bandit arms.
 
     Parameters
@@ -46,35 +48,43 @@ def SCM_to_bandit_machine(M: StructuralCausalModel, Y='Y') -> Tuple[Tuple, Dict[
 
 
 def arm_types():
-    return ['POMIS', 'MIS', 'Brute-force', 'All-at-once']
+    return ["POMIS", "MIS", "Brute-force", "All-at-once"]
 
 
 def arms_of(arm_type: str, arm_setting, G, Y) -> Tuple[int, ...]:
     """Return the indices of arms of a given type."""
-    if arm_type == 'POMIS':
+    if arm_type == "POMIS":
         return pomis_arms_of(arm_setting, G, Y)
-    elif arm_type == 'All-at-once':
+    elif arm_type == "All-at-once":
         return controlphil_arms_of(arm_setting, G, Y)
-    elif arm_type == 'MIS':
+    elif arm_type == "MIS":
         return mis_arms_of(arm_setting, G, Y)
-    elif arm_type == 'Brute-force':
+    elif arm_type == "Brute-force":
         return tuple(range(len(arm_setting)))
-    raise AssertionError(f'unknown: {arm_type}')
+    raise AssertionError(f"unknown: {arm_type}")
 
 
 def pomis_arms_of(arm_setting, G, Y):
     """Indices of arms that correspond to POMIS interventions."""
     pomiss = POMISs(G, Y)
-    return tuple(arm_x for arm_x in range(len(arm_setting)) if set(arm_setting[arm_x]) in pomiss)
+    return tuple(
+        arm_x for arm_x in range(len(arm_setting)) if set(arm_setting[arm_x]) in pomiss
+    )
 
 
 def mis_arms_of(arm_setting, G, Y):
     """Indices of arms that correspond to MIS interventions."""
     miss = MISs(G, Y)
-    return tuple(arm_x for arm_x in range(len(arm_setting)) if set(arm_setting[arm_x]) in miss)
+    return tuple(
+        arm_x for arm_x in range(len(arm_setting)) if set(arm_setting[arm_x]) in miss
+    )
 
 
 def controlphil_arms_of(arm_setting, G, Y):
     """Index of the arm that intervenes on all manipulable variables at once."""
     intervenable = G.manipulable_vars - {Y}
-    return tuple(arm_x for arm_x in range(len(arm_setting)) if arm_setting[arm_x].keys() == intervenable)
+    return tuple(
+        arm_x
+        for arm_x in range(len(arm_setting))
+        if arm_setting[arm_x].keys() == intervenable
+    )

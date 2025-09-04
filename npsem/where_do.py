@@ -43,13 +43,15 @@ def MISs(G: CausalDiagram, Y: str) -> FrozenSet[FrozenSet[str]]:
     return subMISs(G, Y, frozenset(), Ws)
 
 
-def subMISs(G: CausalDiagram, Y: str, Xs: FrozenSet[str], Ws: List[str]) -> FrozenSet[FrozenSet[str]]:
+def subMISs(
+    G: CausalDiagram, Y: str, Xs: FrozenSet[str], Ws: List[str]
+) -> FrozenSet[FrozenSet[str]]:
     """Recursive helper used by :func:`MISs`."""
     out = frozenset({Xs})
     for i, W_i in enumerate(Ws):
         H = G.do({W_i})
         H = H[H.An(Y)]
-        out |= subMISs(H, Y, Xs | {W_i}, only(Ws[i + 1:], H.V))
+        out |= subMISs(H, Y, Xs | {W_i}, only(Ws[i + 1 :], H.V))
     return out
 
 
@@ -57,8 +59,9 @@ def bruteforce_POMISs(G: CausalDiagram, Y: str) -> FrozenSet[FrozenSet[str]]:
     """Compute all POMISs by exhaustive search."""
     # Only consider manipulable variables (excluding the reward variable Y)
     manipulable_vars = G.manipulable_vars - {Y}
-    return frozenset({frozenset(IB(G.do(Ws), Y))
-                      for Ws in combinations(list(manipulable_vars))})
+    return frozenset(
+        {frozenset(IB(G.do(Ws), Y)) for Ws in combinations(list(manipulable_vars))}
+    )
 
 
 def MUCT(G: CausalDiagram, Y: str) -> FrozenSet[str]:
@@ -93,7 +96,9 @@ def POMISs(G: CausalDiagram, Y: str) -> Set[FrozenSet[str]]:
 
     Ts, Xs = MUCT_IB(G, Y)
     H = G.do(Xs)[Ts | Xs]
-    return subPOMISs(H, Y, only(H.causal_order(backward=True), Ts - {Y})) | {frozenset(Xs)}
+    return subPOMISs(H, Y, only(H.causal_order(backward=True), Ts - {Y})) | {
+        frozenset(Xs)
+    }
 
 
 def subPOMISs(G: CausalDiagram, Y, Ws: List, obs=None) -> Set[FrozenSet[str]]:
@@ -108,7 +113,7 @@ def subPOMISs(G: CausalDiagram, Y, Ws: List, obs=None) -> Set[FrozenSet[str]]:
         new_obs = obs | set(Ws[:i])
         if not (Xs & new_obs):
             out.append(Xs)
-            new_Ws = only(Ws[i + 1:], Ts)
+            new_Ws = only(Ws[i + 1 :], Ts)
             if new_Ws:
                 out.extend(subPOMISs(G.do(Xs)[Ts | Xs], Y, new_Ws, new_obs))
     return {frozenset(_) for _ in out}
