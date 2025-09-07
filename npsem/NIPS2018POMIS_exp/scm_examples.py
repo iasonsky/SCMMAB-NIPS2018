@@ -195,20 +195,21 @@ def simple_markovian_SCM(seed=None) -> [StructuralCausalModel, dict]:
         )
         return M, mu1
 
+
 def four_variable_CD(manipulable_vars=None):
     """4-variable Causal Diagram from second paper
-    
+
     Variables: A, B, C, Y
     N = {A} (A is non-manipulable)
     Bidirected edges: A ↔ B, B ↔ Y
     Directed edges: A → C, B → C, A → Y, C → Y
     """
     A, B, C, Y = "A", "B", "C", "Y"
-    
+
     # If no manipulable_vars specified, default excludes A (since N = {A})
     if manipulable_vars is None:
         manipulable_vars = {B, C, Y}
-    
+
     return CausalDiagram(
         {A, B, C, Y},
         [(A, C), (B, C), (A, Y), (C, Y)],  # directed edges
@@ -219,30 +220,30 @@ def four_variable_CD(manipulable_vars=None):
 
 def four_variable_SCM(seed=None):
     """4-variable SCM from second paper with exact parameter values
-    
+
     Based on specifications:
     - P(U_B = 1) = 0.5, P(U_C = 1) = 0.25, P(U_Y = 1) = 0.25
     - P(U_BY = 1) = 0.25, P(U_AB = 1) = 0.4
     - f_A = u_AB
-    - f_B = u_B ⊕ u_AB ⊕ u_BY  
+    - f_B = u_B ⊕ u_AB ⊕ u_BY
     - f_C = u_C ⊕ a ⊕ b
     - f_Y = 1 - (u_BY ⊕ u_Y ⊕ a ⊕ c)
     """
     with seeded(seed):
         G = four_variable_CD()
-        
+
         # Exact parameter values from the paper
         mu1 = {
             "U_B": 0.5,
-            "U_C": 0.25, 
+            "U_C": 0.25,
             "U_Y": 0.25,
             "U_BY": 0.25,
             "U_AB": 0.4,
         }
-        
+
         P_U = default_P_U(mu1)
         domains = defaultdict(lambda: (0, 1))
-        
+
         # Structural equations matching the paper exactly
         M = StructuralCausalModel(
             G,
