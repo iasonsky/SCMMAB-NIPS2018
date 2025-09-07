@@ -7,6 +7,7 @@ from typing import Dict, Tuple, Union, Any
 from npsem.model import StructuralCausalModel
 from npsem.utils import combinations
 from npsem.where_do import POMISs, MISs
+from npsem.latent_projection import latent_projection
 
 
 def SCM_to_bandit_machine(
@@ -66,6 +67,9 @@ def arms_of(arm_type: str, arm_setting, G, Y) -> Tuple[int, ...]:
 
 def pomis_arms_of(arm_setting, G, Y):
     """Indices of arms that correspond to POMIS interventions."""
+    to_remove = G.V - G.manipulable_vars
+    if to_remove != frozenset():
+        G = latent_projection(G, to_remove)
     pomiss = POMISs(G, Y)
     return tuple(
         arm_x for arm_x in range(len(arm_setting)) if set(arm_setting[arm_x]) in pomiss
