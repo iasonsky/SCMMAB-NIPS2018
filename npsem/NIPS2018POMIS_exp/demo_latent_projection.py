@@ -3,6 +3,7 @@
 This script shows the original graph and the results of latent projection
 when marginalizing A, B, and C respectively.
 """
+
 from npsem.model import CausalDiagram
 from npsem.latent_projection import latent_projection
 
