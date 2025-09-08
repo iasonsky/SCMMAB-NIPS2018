@@ -8,7 +8,6 @@ import multiprocessing
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from pathlib import Path
 
 from npsem.NIPS2018POMIS_exp.scm_examples import four_variable_SCM
 from npsem.bandits import play_bandits
@@ -128,7 +127,7 @@ def main():
     print("📊 Creating four-variable SCM...")
     model, p_u = four_variable_SCM(seed=42)
     
-    print(f"🎯 Target variable: Y")
+    print("🎯 Target variable: Y")
     print(f"🔄 Number of trials: {num_simulation_repeats}")
     print(f"⏱️  Horizon: {horizon}")
     print(f"💻 Parallel jobs: {n_jobs}")

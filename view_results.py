@@ -4,7 +4,6 @@ Script to view and analyze the results from the four-variable SCM bandit experim
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 from pathlib import Path
 
 def load_final_regret_results(filepath):
@@ -142,8 +141,8 @@ def main():
     
     # Load and display results
     final_regret_data = load_final_regret_results(final_regret_file)
-    arm_rewards = load_arm_rewards(arm_rewards_file)
-    experiment_data = load_experiment_data(experiment_data_file)
+    load_arm_rewards(arm_rewards_file)
+    load_experiment_data(experiment_data_file)
     
     # Compare algorithms
     compare_algorithms(final_regret_data)

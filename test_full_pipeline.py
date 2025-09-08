@@ -257,7 +257,7 @@ def pomis_union_over_dags(dag_mats, names, Y, N=None, enforce_Y_sink=True):
                 continue
                 
         cd = dagmatrix_to_CausalDiagram(A, names)
-        
+
         # TODO: Add latent projection if N is specified
         # if N:
         #     keep = set(names) - set(N)
