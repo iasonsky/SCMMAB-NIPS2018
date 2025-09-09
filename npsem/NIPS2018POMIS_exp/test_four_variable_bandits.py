@@ -22,7 +22,7 @@ def main_experiment(
     """Run bandit experiments for all arm strategies and algorithms."""
     results = dict()
     mu, arm_setting = SCM_to_bandit_machine(M)
-    arm_types = ["POMIS", "MIS", "Brute-force", "All-at-once"]
+    arm_types = ["POMIS", "MIS", "Brute-force"]  # , "All-at-once"]
     for arm_strategy in arm_types:
         arm_selected = arms_of(arm_strategy, arm_setting, M.G, Y)
         arm_corrector = np.vectorize(lambda x: arm_selected[x])
@@ -58,7 +58,7 @@ def plot_cumulative_regret(
         "Brute-force": "red",
         "MIS": "purple",
         "POMIS": "blue",
-        "All-at-once": "green",
+        # "All-at-once": "green",
     }
 
     for i, ((arm_strategy, bandit_algo), (arms, rewards)) in enumerate(results.items()):
