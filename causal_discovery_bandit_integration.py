@@ -28,7 +28,7 @@ from test_full_pipeline import (
 )
 
 # Import SCM examples and bandit framework
-from npsem.NIPS2018POMIS_exp.scm_examples import simple_markovian_SCM
+from npsem.NIPS2018POMIS_exp.scm_examples import chain_SCM
 from npsem.bandits import play_bandits
 from npsem.scm_bandits import SCM_to_bandit_machine, arms_of, arm_types
 from npsem.utils import subseq, seeded
@@ -106,7 +106,7 @@ def run_discovery_bandit_experiment(
     Run the complete causal discovery + bandit experiment pipeline.
 
     This follows the correct pipeline:
-    1. Choose one DAG as ground truth (simple_markovian_SCM)
+    1. Choose one DAG as ground truth (chain_SCM: Z -> X -> Y)
     2. Simulate data from ground truth SCM
     3. Learn MEC from data using PC algorithm
     4. Use POMIS on all graphs in MEC and take union
@@ -371,9 +371,9 @@ def main():
     print("🚀 Starting Causal Discovery + Bandit Experiment Pipeline")
     print("   (Ground Truth → Data → MEC → POMIS Union → Bandit Tests)")
 
-    # Step 1: Choose ground truth SCM (simple_markovian)
+    # Step 1: Choose ground truth SCM (chain: Z -> X -> Y)
     print("\n📊 Setting up ground truth SCM...")
-    ground_truth_scm, p_u_params = simple_markovian_SCM(seed=42)
+    ground_truth_scm, p_u_params = chain_SCM(devised=True, seed=42)
     print(f"   Ground truth SCM: {ground_truth_scm.G}")
     print(f"   Variables: {list(ground_truth_scm.G.V)}")
     print(f"   Manipulable variables: {ground_truth_scm.G.manipulable_vars}")

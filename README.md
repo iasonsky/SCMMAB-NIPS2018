@@ -5,19 +5,43 @@
 We provide codebase to allow readers to reproduce our experiments. This code also contains various utilities related to causal diagram, structural causal model, and multi-armed bandit problem.
 (At this moment, the code is not well-documented.) 
 
-The code is tested with the following configuration: `python=3.9`, `numpy=1.21.2`,
-`scipy=1.7.1`, `joblib=1.0.1`, `matplotlib=3.4.3`, `seaborn=0.11.2`, and
-`networkx=2.6.3`, on Linux and MacOS machines.
+The code is tested with the following configuration: `python=3.13`, `numpy=2.3.2`,
+`scipy=1.16.1`, `joblib=1.5.2`, `matplotlib=3.10.5`, `seaborn=0.13.2`, and
+`networkx=3.5`, on Linux and MacOS machines.
 
 ## Getting Started
+
+### 1. Create a Virtual Environment
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate  # On macOS/Linux
+# or
+venv\Scripts\activate     # On Windows
+```
+
+### 2. Install Dependencies
 
 Install the package in editable mode together with the required dependencies:
 
 ```bash
-python -m pip install -e .
+# Install from requirements.txt
+pip install -r requirements.txt
+
+# Install the package in editable mode
+pip install -e .
 ```
 
 After installation the `npsem` module can be imported from anywhere.
+
+### 3. Deactivate When Done
+
+```bash
+deactivate
+```
 
 ## Module Overview
 
@@ -33,10 +57,10 @@ After installation the `npsem` module can be imported from anywhere.
   utilities.
 - **viz_util.py** – basic plotting helpers such as sparse index generation.
 
-## Getting Started
+## Environment Setup
 
-For full environment setup instructions, see
-[snellius_uv_setup.md](snellius_uv_setup.md).
+For detailed environment setup instructions, see
+[snellius_uv_setup.md](snellius_uv_setup.md) (note: this file contains uv-specific instructions for Snellius supercomputer).
 
 
 ## Reproducing the Experiments
@@ -118,15 +142,17 @@ The instrumentation demonstrates that:
 - 📊 Different orderings can have **varying computational costs**
 - 🔍 The instrumentation captures detailed metrics for performance analysis
 
-### Using uv (Recommended)
+### Running with Virtual Environment
 
-If you have `uv` installed:
+Make sure to activate your virtual environment first:
 
 ```bash
-# Install dependencies and run experiment
-uv sync
-uv run python -m npsem.NIPS2018POMIS_exp.pomis_topological_experiment
+# Activate virtual environment
+source venv/bin/activate
+
+# Run experiment
+python -m npsem.NIPS2018POMIS_exp.pomis_topological_experiment
 
 # Quick test with fewer random orders
-uv run python -m npsem.NIPS2018POMIS_exp.pomis_topological_experiment --num-random 5 --no-plots
+python -m npsem.NIPS2018POMIS_exp.pomis_topological_experiment --num-random 5 --no-plots
 ```

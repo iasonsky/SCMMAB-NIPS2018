@@ -258,3 +258,71 @@ def four_variable_SCM(seed=None):
             more_U={"U_B", "U_C", "U_Y"},
         )
         return M, mu1
+
+
+def chain_CD(manipulable_vars=None):
+    """Chain Causal Diagram: Z -> X -> Y"""
+    Z, X, Y = "Z", "X", "Y"
+    return CausalDiagram(
+        {Z, X, Y}, [(Z, X), (X, Y)], [], manipulable_vars=manipulable_vars
+    )
+
+
+def chain_SCM(devised=True, seed=None):
+    """
+    Chain SCM: Z -> X -> Y
+    
+    This creates a binary version of the chain structure used in test_full_pipeline.py
+    where Z influences X, and X influences Y.
+    
+    Parameters:
+    -----------
+    devised : bool
+        If True, uses carefully chosen parameters for better bandit performance
+        If False, uses random parameters
+    seed : int, optional
+        Random seed for reproducibility
+        
+    Returns:
+    --------
+    M : StructuralCausalModel
+        The chain SCM
+    mu1 : dict
+        Parameter values used
+    """
+    with seeded(seed):
+        G = chain_CD()
+        
+        # parametrization for U
+        if devised:
+            mu1 = {
+                "U_Z": rand_bw(0.1, 0.9, precision=2),
+                "U_X": rand_bw(0.01, 0.2, precision=2),  # Small noise for X
+                "U_Y": rand_bw(0.01, 0.2, precision=2),  # Small noise for Y
+            }
+        else:
+            mu1 = {
+                "U_Z": rand_bw(0.01, 0.99, precision=2),
+                "U_X": rand_bw(0.01, 0.99, precision=2),
+                "U_Y": rand_bw(0.01, 0.99, precision=2),
+            }
+        
+        P_U = default_P_U(mu1)
+        domains = defaultdict(lambda: (0, 1))
+        
+        # SCM with parametrization
+        # Z is exogenous (only depends on U_Z)
+        # X depends on Z and U_X (Z -> X)
+        # Y depends on X and U_Y (X -> Y)
+        M = StructuralCausalModel(
+            G,
+            F={
+                "Z": lambda v: v["U_Z"],
+                "X": lambda v: v["U_X"] ^ v["Z"],  # X = U_X XOR Z
+                "Y": lambda v: v["U_Y"] ^ v["X"],  # Y = U_Y XOR X
+            },
+            P_U=P_U,
+            D=domains,
+            more_U={"U_Z", "U_X", "U_Y"},
+        )
+        return M, mu1

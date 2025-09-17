@@ -7,11 +7,11 @@
     "total_subpomis_calls": 2,
     "total_ib_evaluations": 5,
     "total_pruned_branches": 2,
-    "computation_time": 0.0004639625549316406,
+    "computation_time": 0.00020623207092285156,
     "max_recursion_depth": 2,
     "mean_recursion_depth": 1.5,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
+    "final_pomis_set_hash": 3491754562099862542
   },
   {
     "graph_name": "XYZWST",
@@ -21,11 +21,11 @@
     "total_subpomis_calls": 2,
     "total_ib_evaluations": 5,
     "total_pruned_branches": 2,
-    "computation_time": 6.4849853515625e-05,
+    "computation_time": 7.82012939453125e-05,
     "max_recursion_depth": 2,
     "mean_recursion_depth": 1.5,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
+    "final_pomis_set_hash": 3491754562099862542
   },
   {
     "graph_name": "XYZWST",
@@ -35,11 +35,11 @@
     "total_subpomis_calls": 2,
     "total_ib_evaluations": 5,
     "total_pruned_branches": 2,
-    "computation_time": 5.91278076171875e-05,
+    "computation_time": 6.413459777832031e-05,
     "max_recursion_depth": 2,
     "mean_recursion_depth": 1.5,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
+    "final_pomis_set_hash": 3491754562099862542
   },
   {
     "graph_name": "XYZWST",
@@ -49,16 +49,254 @@
     "total_subpomis_calls": 2,
     "total_ib_evaluations": 5,
     "total_pruned_branches": 2,
-    "computation_time": 9.608268737792969e-05,
+    "computation_time": 6.508827209472656e-05,
     "max_recursion_depth": 2,
     "mean_recursion_depth": 1.5,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
+    "final_pomis_set_hash": 3491754562099862542
   },
   {
     "graph_name": "XYZWST",
     "strategy": "random_00",
+    "order": "('Y', 'X', 'Z', 'W', 'S', 'T')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.508827209472656e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_01",
+    "order": "('Y', 'W', 'X', 'Z', 'S', 'T')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.389617919921875e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_02",
+    "order": "('Y', 'X', 'W', 'Z', 'S', 'T')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 0.0001857280731201172,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_03",
+    "order": "('Y', 'W', 'S', 'X', 'Z', 'T')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.413459777832031e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_04",
+    "order": "('Y', 'X', 'W', 'S', 'Z', 'T')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 5.91278076171875e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_05",
+    "order": "('Y', 'W', 'X', 'S', 'Z', 'T')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 5.91278076171875e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_06",
+    "order": "('Y', 'X', 'T', 'Z', 'W', 'S')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.198883056640625e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_07",
+    "order": "('Y', 'X', 'Z', 'T', 'W', 'S')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.103515625e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_08",
+    "order": "('Y', 'W', 'X', 'T', 'Z', 'S')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.794929504394531e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_09",
+    "order": "('Y', 'X', 'W', 'T', 'Z', 'S')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.198883056640625e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_10",
+    "order": "('Y', 'X', 'T', 'W', 'Z', 'S')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.103515625e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_11",
+    "order": "('Y', 'X', 'Z', 'W', 'T', 'S')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.604194641113281e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_12",
+    "order": "('Y', 'W', 'X', 'Z', 'T', 'S')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.198883056640625e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_13",
+    "order": "('Y', 'X', 'W', 'Z', 'T', 'S')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 0.0002048015594482422,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_14",
+    "order": "('Y', 'W', 'S', 'X', 'T', 'Z')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.198883056640625e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_15",
     "order": "('Y', 'X', 'W', 'S', 'T', 'Z')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 5.888938903808594e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_16",
+    "order": "('Y', 'W', 'X', 'S', 'T', 'Z')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 2,
+    "total_ib_evaluations": 5,
+    "total_pruned_branches": 2,
+    "computation_time": 6.079673767089844e-05,
+    "max_recursion_depth": 2,
+    "mean_recursion_depth": 1.5,
+    "final_pomis_set_size": 3,
+    "final_pomis_set_hash": 3491754562099862542
+  },
+  {
+    "graph_name": "XYZWST",
+    "strategy": "random_17",
+    "order": "('Y', 'X', 'T', 'W', 'S', 'Z')",
     "result_matches_reference": true,
     "total_subpomis_calls": 2,
     "total_ib_evaluations": 5,
@@ -67,133 +305,35 @@
     "max_recursion_depth": 2,
     "mean_recursion_depth": 1.5,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
+    "final_pomis_set_hash": 3491754562099862542
   },
   {
     "graph_name": "XYZWST",
-    "strategy": "random_01",
-    "order": "('Y', 'W', 'X', 'S', 'Z', 'T')",
-    "result_matches_reference": true,
-    "total_subpomis_calls": 2,
-    "total_ib_evaluations": 5,
-    "total_pruned_branches": 2,
-    "computation_time": 5.602836608886719e-05,
-    "max_recursion_depth": 2,
-    "mean_recursion_depth": 1.5,
-    "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
-  },
-  {
-    "graph_name": "XYZWST",
-    "strategy": "random_02",
+    "strategy": "random_18",
     "order": "('Y', 'W', 'X', 'T', 'S', 'Z')",
     "result_matches_reference": true,
     "total_subpomis_calls": 2,
     "total_ib_evaluations": 5,
     "total_pruned_branches": 2,
-    "computation_time": 5.888938903808594e-05,
+    "computation_time": 5.793571472167969e-05,
     "max_recursion_depth": 2,
     "mean_recursion_depth": 1.5,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
+    "final_pomis_set_hash": 3491754562099862542
   },
   {
     "graph_name": "XYZWST",
-    "strategy": "random_03",
-    "order": "('Y', 'W', 'X', 'T', 'Z', 'S')",
+    "strategy": "random_19",
+    "order": "('Y', 'X', 'W', 'T', 'S', 'Z')",
     "result_matches_reference": true,
     "total_subpomis_calls": 2,
     "total_ib_evaluations": 5,
     "total_pruned_branches": 2,
-    "computation_time": 5.888938903808594e-05,
+    "computation_time": 5.793571472167969e-05,
     "max_recursion_depth": 2,
     "mean_recursion_depth": 1.5,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
-  },
-  {
-    "graph_name": "XYZWST",
-    "strategy": "random_04",
-    "order": "('Y', 'X', 'W', 'Z', 'T', 'S')",
-    "result_matches_reference": true,
-    "total_subpomis_calls": 2,
-    "total_ib_evaluations": 5,
-    "total_pruned_branches": 2,
-    "computation_time": 0.00010514259338378906,
-    "max_recursion_depth": 2,
-    "mean_recursion_depth": 1.5,
-    "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
-  },
-  {
-    "graph_name": "XYZWST",
-    "strategy": "random_05",
-    "order": "('Y', 'X', 'T', 'W', 'Z', 'S')",
-    "result_matches_reference": true,
-    "total_subpomis_calls": 2,
-    "total_ib_evaluations": 5,
-    "total_pruned_branches": 2,
-    "computation_time": 9.894371032714844e-05,
-    "max_recursion_depth": 2,
-    "mean_recursion_depth": 1.5,
-    "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
-  },
-  {
-    "graph_name": "XYZWST",
-    "strategy": "random_06",
-    "order": "('Y', 'X', 'T', 'W', 'S', 'Z')",
-    "result_matches_reference": true,
-    "total_subpomis_calls": 2,
-    "total_ib_evaluations": 5,
-    "total_pruned_branches": 2,
-    "computation_time": 5.698204040527344e-05,
-    "max_recursion_depth": 2,
-    "mean_recursion_depth": 1.5,
-    "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
-  },
-  {
-    "graph_name": "XYZWST",
-    "strategy": "random_07",
-    "order": "('Y', 'X', 'Z', 'W', 'T', 'S')",
-    "result_matches_reference": true,
-    "total_subpomis_calls": 2,
-    "total_ib_evaluations": 5,
-    "total_pruned_branches": 2,
-    "computation_time": 5.507469177246094e-05,
-    "max_recursion_depth": 2,
-    "mean_recursion_depth": 1.5,
-    "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
-  },
-  {
-    "graph_name": "XYZWST",
-    "strategy": "random_08",
-    "order": "('Y', 'W', 'S', 'X', 'T', 'Z')",
-    "result_matches_reference": true,
-    "total_subpomis_calls": 2,
-    "total_ib_evaluations": 5,
-    "total_pruned_branches": 2,
-    "computation_time": 6.031990051269531e-05,
-    "max_recursion_depth": 2,
-    "mean_recursion_depth": 1.5,
-    "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
-  },
-  {
-    "graph_name": "XYZWST",
-    "strategy": "random_09",
-    "order": "('Y', 'W', 'X', 'S', 'T', 'Z')",
-    "result_matches_reference": true,
-    "total_subpomis_calls": 2,
-    "total_ib_evaluations": 5,
-    "total_pruned_branches": 2,
-    "computation_time": 6.031990051269531e-05,
-    "max_recursion_depth": 2,
-    "mean_recursion_depth": 1.5,
-    "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 3027889307929404988
+    "final_pomis_set_hash": 3491754562099862542
   },
   {
     "graph_name": "XYZW",
@@ -203,11 +343,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 4,
     "total_pruned_branches": 1,
-    "computation_time": 0.00012493133544921875,
+    "computation_time": 9.489059448242188e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 2812951167796290882
+    "final_pomis_set_hash": -870852755562275890
   },
   {
     "graph_name": "XYZW",
@@ -217,11 +357,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 4,
     "total_pruned_branches": 1,
-    "computation_time": 2.47955322265625e-05,
+    "computation_time": 2.5987625122070312e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 2812951167796290882
+    "final_pomis_set_hash": -870852755562275890
   },
   {
     "graph_name": "XYZW",
@@ -235,7 +375,7 @@
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 2812951167796290882
+    "final_pomis_set_hash": -870852755562275890
   },
   {
     "graph_name": "XYZW",
@@ -245,11 +385,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 4,
     "total_pruned_branches": 1,
-    "computation_time": 2.288818359375e-05,
+    "computation_time": 2.5033950805664062e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 2812951167796290882
+    "final_pomis_set_hash": -870852755562275890
   },
   {
     "graph_name": "XYZW",
@@ -259,11 +399,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 4,
     "total_pruned_branches": 1,
-    "computation_time": 2.2172927856445312e-05,
+    "computation_time": 2.47955322265625e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 2812951167796290882
+    "final_pomis_set_hash": -870852755562275890
   },
   {
     "graph_name": "XYZW",
@@ -273,11 +413,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 4,
     "total_pruned_branches": 1,
-    "computation_time": 2.09808349609375e-05,
+    "computation_time": 2.384185791015625e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 2812951167796290882
+    "final_pomis_set_hash": -870852755562275890
   },
   {
     "graph_name": "XYZW",
@@ -287,11 +427,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 4,
     "total_pruned_branches": 1,
-    "computation_time": 2.193450927734375e-05,
+    "computation_time": 2.47955322265625e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 3,
-    "final_pomis_set_hash": 2812951167796290882
+    "final_pomis_set_hash": -870852755562275890
   },
   {
     "graph_name": "IV",
@@ -301,11 +441,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 2,
     "total_pruned_branches": 0,
-    "computation_time": 5.316734313964844e-05,
+    "computation_time": 0.00018286705017089844,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 2,
-    "final_pomis_set_hash": -8705944185448665951
+    "final_pomis_set_hash": -119733960583450687
   },
   {
     "graph_name": "IV",
@@ -315,11 +455,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 2,
     "total_pruned_branches": 0,
-    "computation_time": 1.5735626220703125e-05,
+    "computation_time": 1.71661376953125e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 2,
-    "final_pomis_set_hash": -8705944185448665951
+    "final_pomis_set_hash": -119733960583450687
   },
   {
     "graph_name": "IV",
@@ -333,7 +473,7 @@
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 2,
-    "final_pomis_set_hash": -8705944185448665951
+    "final_pomis_set_hash": -119733960583450687
   },
   {
     "graph_name": "IV",
@@ -343,11 +483,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 2,
     "total_pruned_branches": 0,
-    "computation_time": 1.4066696166992188e-05,
+    "computation_time": 1.5974044799804688e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 2,
-    "final_pomis_set_hash": -8705944185448665951
+    "final_pomis_set_hash": -119733960583450687
   },
   {
     "graph_name": "IV",
@@ -357,11 +497,11 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 2,
     "total_pruned_branches": 0,
-    "computation_time": 1.2874603271484375e-05,
+    "computation_time": 1.4781951904296875e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 2,
-    "final_pomis_set_hash": -8705944185448665951
+    "final_pomis_set_hash": -119733960583450687
   },
   {
     "graph_name": "IV",
@@ -371,16 +511,16 @@
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 2,
     "total_pruned_branches": 0,
-    "computation_time": 4.410743713378906e-05,
+    "computation_time": 1.4066696166992188e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 2,
-    "final_pomis_set_hash": -8705944185448665951
+    "final_pomis_set_hash": -119733960583450687
   },
   {
     "graph_name": "simple_markovian",
     "strategy": "default",
-    "order": "('Y', 'X1', 'X2', 'Z2', 'Z1')",
+    "order": "('Y', 'X2', 'X1', 'Z2', 'Z1')",
     "result_matches_reference": true,
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 1,
@@ -389,26 +529,26 @@
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 1,
-    "final_pomis_set_hash": -853217035173962158
+    "final_pomis_set_hash": 6690356988534675780
   },
   {
     "graph_name": "simple_markovian",
     "strategy": "random",
-    "order": "('Y', 'X1', 'X2', 'Z2', 'Z1')",
+    "order": "('Y', 'X2', 'X1', 'Z2', 'Z1')",
     "result_matches_reference": true,
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 1,
     "total_pruned_branches": 0,
-    "computation_time": 2.09808349609375e-05,
+    "computation_time": 2.193450927734375e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 1,
-    "final_pomis_set_hash": -853217035173962158
+    "final_pomis_set_hash": 6690356988534675780
   },
   {
     "graph_name": "simple_markovian",
     "strategy": "bfs",
-    "order": "('Z2', 'Y', 'X1', 'X2', 'Z1')",
+    "order": "('Z2', 'Y', 'X2', 'X1', 'Z1')",
     "result_matches_reference": true,
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 1,
@@ -417,76 +557,76 @@
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 1,
-    "final_pomis_set_hash": -853217035173962158
+    "final_pomis_set_hash": 6690356988534675780
   },
   {
     "graph_name": "simple_markovian",
     "strategy": "reverse",
-    "order": "('Z1', 'Z2', 'X2', 'X1', 'Y')",
+    "order": "('Z1', 'Z2', 'X1', 'X2', 'Y')",
     "result_matches_reference": true,
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 1,
     "total_pruned_branches": 0,
-    "computation_time": 1.9073486328125e-05,
+    "computation_time": 1.7881393432617188e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 1,
-    "final_pomis_set_hash": -853217035173962158
+    "final_pomis_set_hash": 6690356988534675780
   },
   {
     "graph_name": "simple_markovian",
     "strategy": "random_00",
-    "order": "('Y', 'X2', 'X1', 'Z1', 'Z2')",
-    "result_matches_reference": true,
-    "total_subpomis_calls": 1,
-    "total_ib_evaluations": 1,
-    "total_pruned_branches": 0,
-    "computation_time": 2.09808349609375e-05,
-    "max_recursion_depth": 1,
-    "mean_recursion_depth": 1.0,
-    "final_pomis_set_size": 1,
-    "final_pomis_set_hash": -853217035173962158
-  },
-  {
-    "graph_name": "simple_markovian",
-    "strategy": "random_01",
     "order": "('Y', 'X1', 'X2', 'Z1', 'Z2')",
     "result_matches_reference": true,
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 1,
     "total_pruned_branches": 0,
-    "computation_time": 1.9073486328125e-05,
+    "computation_time": 1.6927719116210938e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 1,
-    "final_pomis_set_hash": -853217035173962158
+    "final_pomis_set_hash": 6690356988534675780
   },
   {
     "graph_name": "simple_markovian",
-    "strategy": "random_02",
-    "order": "('Y', 'X2', 'X1', 'Z2', 'Z1')",
+    "strategy": "random_01",
+    "order": "('Y', 'X2', 'X1', 'Z1', 'Z2')",
     "result_matches_reference": true,
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 1,
     "total_pruned_branches": 0,
-    "computation_time": 1.8835067749023438e-05,
+    "computation_time": 1.7881393432617188e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 1,
-    "final_pomis_set_hash": -853217035173962158
+    "final_pomis_set_hash": 6690356988534675780
   },
   {
     "graph_name": "simple_markovian",
-    "strategy": "random_03",
+    "strategy": "random_02",
     "order": "('Y', 'X1', 'X2', 'Z2', 'Z1')",
     "result_matches_reference": true,
     "total_subpomis_calls": 1,
     "total_ib_evaluations": 1,
     "total_pruned_branches": 0,
-    "computation_time": 1.9788742065429688e-05,
+    "computation_time": 1.6927719116210938e-05,
     "max_recursion_depth": 1,
     "mean_recursion_depth": 1.0,
     "final_pomis_set_size": 1,
-    "final_pomis_set_hash": -853217035173962158
+    "final_pomis_set_hash": 6690356988534675780
+  },
+  {
+    "graph_name": "simple_markovian",
+    "strategy": "random_03",
+    "order": "('Y', 'X2', 'X1', 'Z2', 'Z1')",
+    "result_matches_reference": true,
+    "total_subpomis_calls": 1,
+    "total_ib_evaluations": 1,
+    "total_pruned_branches": 0,
+    "computation_time": 1.7881393432617188e-05,
+    "max_recursion_depth": 1,
+    "mean_recursion_depth": 1.0,
+    "final_pomis_set_size": 1,
+    "final_pomis_set_hash": 6690356988534675780
   }
 ]
