@@ -29,7 +29,7 @@ from npsem.scm_bandits import SCM_to_bandit_machine, arms_of, arm_types
 from npsem.utils import subseq
 from npsem.data_simulation import simulate_data_from_scm
 # =============================================================================
-# BANDIT EXPERIMENT INTEGRATION
+# CAUSAL DISCOVERY + BANDIT EXPERIMENT INTEGRATION
 # =============================================================================
 
 
@@ -87,11 +87,21 @@ def run_discovery_bandit_experiment(
     data, var_names = simulate_data_from_scm(ground_truth_scm, n_samples, seed=42)
     print(f"   Generated {data.shape[0]} samples for variables: {var_names}")
     print(f"   Ground truth SCM: {ground_truth_scm.G}")
+    print("   Data correlations:")
+    for i in range(len(var_names)):
+        for j in range(i + 1, len(var_names)):
+            corr = np.corrcoef(data[:, i], data[:, j])[0, 1]
+            print(f"     {var_names[i]} - {var_names[j]}: {corr:.4f}")
 
     # Step 2: Causal Discovery
     print("\n2. Running PC algorithm for causal discovery...")
     A_cpdag_cl, dags, pomis_union = run_causal_discovery_pipeline(
-        data, var_names, ind_test="gsq", alpha=alpha, save_plot=save_plots
+        data,
+        var_names,
+        ind_test="gsq",
+        alpha=alpha,
+        sanity_check=True,
+        ground_truth_scm=ground_truth_scm,
     )
     print("   Discovered CPDAG adjacency matrix:")
     print(f"   {A_cpdag_cl}")
@@ -309,6 +319,7 @@ def main():
     print(f"   Ground truth SCM: {ground_truth_scm.G}")
     print(f"   Variables: {list(ground_truth_scm.G.V)}")
     print(f"   Manipulable variables: {ground_truth_scm.G.manipulable_vars}")
+    print(f"   Parameters: {p_u_params}")
 
     # Run the integrated experiment
     results = run_discovery_bandit_experiment(

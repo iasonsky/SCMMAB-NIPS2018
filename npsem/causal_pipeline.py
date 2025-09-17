@@ -7,20 +7,24 @@ pipelines, integrating all the individual components.
 """
 
 import numpy as np
-from typing import List, Tuple, Set
+from typing import List, Tuple, Set, Optional
 
 from npsem.causal_discovery import pc_cpdag_adjacency, cl_cpdag_to_pcalg
 from npsem.dag_enumeration import enumerate_dags_from_cpdag
 from npsem.pomis_analysis import pomis_union_over_dags
+from npsem.causal_visualization import (
+    create_combined_sanity_check_visualization,
+)
 
 
 def run_causal_discovery_pipeline(
     data: np.ndarray,
     var_names: List[str],
     alpha: float = 0.05,
-    ind_test: str = "fisherz",
+    ind_test: str = "gsq",
     Y: str = "Y",
-    save_plot: bool = True,
+    sanity_check: bool = False,
+    ground_truth_scm: Optional[object] = None,
 ) -> Tuple[np.ndarray, List[np.ndarray], Set[Tuple[str, ...]]]:
     """
     Run complete causal discovery pipeline: CPDAG → DAGs → POMIS union.
@@ -37,8 +41,10 @@ def run_causal_discovery_pipeline(
         Independence test to use
     Y : str
         Target variable for POMIS analysis
-    save_plot : bool
-        Whether to save CPDAG visualization
+    sanity_check : bool
+        Whether to show step-by-step visualizations
+    ground_truth_scm : StructuralCausalModel, optional
+        Ground truth SCM for sanity check comparison
 
     Returns:
     --------
@@ -49,8 +55,20 @@ def run_causal_discovery_pipeline(
     pomis_union : Set[Tuple[str, ...]]
         Union of POMIS sets across all DAGs
     """
+
+    if sanity_check:
+        print("\n🔍 SANITY CHECK MODE: Step-by-step verification")
+        print("=" * 60)
+
     # Step 1: Discover CPDAG
-    cpdag_cl, names_pc = pc_cpdag_adjacency(data, var_names, alpha, ind_test, save_plot)
+    cpdag_cl, names_pc = pc_cpdag_adjacency(
+        data, var_names, alpha, ind_test, save_plot=False
+    )
+
+    if sanity_check:
+        print("\n1️⃣ CPDAG Discovery Complete")
+        print(f"   Found CPDAG with {np.sum(cpdag_cl != 0)} edges")
+        print(f"   CPDAG matrix:\n{cpdag_cl}")
 
     # Step 2: Convert to pcalg format
     cpdag_pcalg = cl_cpdag_to_pcalg(cpdag_cl)
@@ -58,7 +76,30 @@ def run_causal_discovery_pipeline(
     # Step 3: Enumerate DAGs
     dags = enumerate_dags_from_cpdag(cpdag_pcalg, names_pc)
 
+    if sanity_check:
+        print("\n2️⃣ DAG Enumeration Complete")
+        print(f"   Found {len(dags)} DAGs in the Markov Equivalence Class")
+
     # Step 4: Compute POMIS union
     pomis_union = pomis_union_over_dags(dags, names_pc, Y)
+
+    if sanity_check:
+        print("\n3️⃣ POMIS Analysis Complete")
+        print(f"   POMIS Union: {pomis_union}")
+
+        # Create combined visualization
+        if ground_truth_scm is not None:
+            combined_path = create_combined_sanity_check_visualization(
+                ground_truth_scm=ground_truth_scm,
+                cpdag_matrix=cpdag_cl,
+                dags=dags,
+                var_names=var_names,
+                Y=Y,
+                show_inline=True,
+            )
+            print(f"📊 Combined visualization saved: {combined_path}")
+
+        print("\n✅ SANITY CHECK COMPLETE")
+        print("=" * 60)
 
     return cpdag_pcalg, dags, pomis_union
