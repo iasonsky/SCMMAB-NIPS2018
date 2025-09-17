@@ -215,51 +215,71 @@ def analyze_bandit_results(results: Dict, mu: np.ndarray, horizon: int) -> Dict:
 
 
 def create_visualizations(results: Dict, mu: np.ndarray, horizon: int, analysis: Dict):
-    """Create visualizations of the results."""
-    # Set up plotting style
-    plt.style.use("seaborn-v0_8")
-    sns.set_palette("husl")
+    """Create visualizations of the results in the style of the original paper."""
+    # Set up plotting style to match the paper (without LaTeX dependency)
+    import matplotlib as mpl
 
-    # 1. Cumulative Regret Plot
-    fig, ax = plt.subplots(1, 1, figsize=(12, 8))
+    mpl.rc("font", family="sans-serif")
+    mpl.rc("font", serif="Helvetica")
 
-    strategy_colors = {"Brute-force": "red", "MIS": "purple", "POMIS": "blue"}
+    # Use the same color palette as the paper
+    c__ = sns.color_palette("Set1", 4)
+    COLORS = [c__[0], c__[0], c__[1], c__[1], c__[2], c__[2], c__[3], c__[3]]
+
+    # Map strategies to colors (matching paper's approach)
+    strategy_algo_pairs = [(strategy, algo) for (strategy, algo) in analysis.keys()]
+    strategy_colors = {}
+    for i, (arm_strategy, bandit_algo) in enumerate(strategy_algo_pairs):
+        strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i]
+
+    # 1. Cumulative Regret Plot (Paper Style)
+    fig, ax = plt.subplots(1, 1, figsize=(8, 5))
 
     for (arm_strategy, bandit_algo), data in analysis.items():
         cumulative_regret = data["cumulative_regret"]
         mean_regret = np.mean(cumulative_regret, axis=0)
         std_regret = np.std(cumulative_regret, axis=0)
 
-        # 95% confidence interval
-        n_trials = cumulative_regret.shape[0]
-        se_regret = std_regret / np.sqrt(n_trials)
-        ci_margin = 1.96 * se_regret
+        # Use standard deviation for bands (like the paper)
+        lower, upper = mean_regret - std_regret, mean_regret + std_regret
 
-        color = strategy_colors.get(arm_strategy, "gray")
+        color = strategy_colors.get((arm_strategy, bandit_algo), "gray")
         linestyle = "-" if bandit_algo == "TS" else "--"
 
-        trials = np.arange(1, horizon + 1)
+        # Sparse time points for cleaner visualization (like paper)
+        from npsem.viz_util import sparse_index
+
+        time_points = sparse_index(horizon, 200)
+
+        # Plot with paper's styling
         ax.plot(
-            trials,
-            mean_regret,
-            label=f"{arm_strategy} ({bandit_algo})",
+            time_points,
+            mean_regret[time_points],
+            lw=1,
+            label=arm_strategy.split(" ")[0]
+            if "(TS)" in f"{arm_strategy} ({bandit_algo})"
+            else None,
             color=color,
             linestyle=linestyle,
-            linewidth=2,
-        )
-        ax.fill_between(
-            trials,
-            mean_regret - ci_margin,
-            mean_regret + ci_margin,
-            alpha=0.2,
-            color=color,
         )
 
-    ax.set_xlabel("Trials", fontsize=12)
-    ax.set_ylabel("Cumulative Regret", fontsize=12)
-    ax.set_title("Causal Discovery + Bandit Experiment Results", fontsize=14)
-    ax.legend()
-    ax.grid(True, alpha=0.3)
+        # Fill between with paper's alpha
+        ax.fill_between(
+            time_points,
+            lower[time_points],
+            upper[time_points],
+            color=color,
+            alpha=0.1,  # Paper uses band_alpha=0.1
+            lw=0,
+        )
+
+    # Paper-style formatting
+    ax.set_xlabel("Trials")
+    ax.set_ylabel("Cum. Regrets")
+    ax.legend(loc=2, frameon=False)  # Paper uses loc=2, frameon=False
+
+    # Remove spines and add paper-style formatting
+    sns.despine()
 
     plt.tight_layout()
     plt.savefig("causal_discovery_bandit_results.png", dpi=300, bbox_inches="tight")

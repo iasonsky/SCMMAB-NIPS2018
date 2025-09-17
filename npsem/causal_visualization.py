@@ -66,7 +66,7 @@ def plot_causal_diagram_pydot(
     graph = pydot.Dot(graph_type="digraph")
     graph.set_rankdir("TB")  # Top to bottom layout
     graph.set_bgcolor("white")
-    
+
     # Set consistent sizing for combined visualizations
     if consistent_sizing:
         graph.set_size("2,2!")  # Force smaller, consistent size
@@ -163,7 +163,7 @@ def plot_cpdag_pydot(
     graph = pydot.Dot(graph_type="graph")  # Undirected for CPDAG
     graph.set_rankdir("TB")  # Top to bottom layout
     graph.set_bgcolor("white")
-    
+
     # Set consistent sizing for combined visualizations
     if consistent_sizing:
         graph.set_size("2,2!")  # Force smaller, consistent size
@@ -177,7 +177,7 @@ def plot_cpdag_pydot(
         # Use consistent node sizing
         node_size = "0.4" if consistent_sizing else "0.8"
         font_size = "10" if consistent_sizing else "14"
-        
+
         node = pydot.Node(
             var,
             style="filled",
@@ -300,7 +300,7 @@ def create_combined_sanity_check_visualization(
 ) -> str:
     """
     Create a single comprehensive visualization showing all sanity check results.
-    
+
     Parameters:
     -----------
     ground_truth_scm : StructuralCausalModel
@@ -317,105 +317,127 @@ def create_combined_sanity_check_visualization(
         Directory to save figures in (defaults to ./figures/)
     show_inline : bool
         Whether to display the plot inline
-        
+
     Returns:
     --------
     str
         Path to the saved combined visualization
     """
     from npsem.causal_diagram_utils import dagmatrix_to_CausalDiagram
-    
+
     # Set up directory
     if figures_dir is None:
         figures_dir = ensure_figures_directory()
-    
+
     # Create individual plots first with consistent sizing
     ground_truth_path = plot_causal_diagram_pydot(
-        ground_truth_scm.G, var_names, "temp_ground_truth", "Ground Truth",
-        figures_dir=figures_dir, show_inline=False, consistent_sizing=True
+        ground_truth_scm.G,
+        var_names,
+        "temp_ground_truth",
+        "Ground Truth",
+        figures_dir=figures_dir,
+        show_inline=False,
+        consistent_sizing=True,
     )
-    
+
     cpdag_path = plot_cpdag_pydot(
-        cpdag_matrix, var_names, "temp_cpdag", "Discovered CPDAG",
-        figures_dir=figures_dir, show_inline=False, consistent_sizing=True
+        cpdag_matrix,
+        var_names,
+        "temp_cpdag",
+        "Discovered CPDAG",
+        figures_dir=figures_dir,
+        show_inline=False,
+        consistent_sizing=True,
     )
-    
+
     # Create DAG plots
     dag_paths = []
     for i, dag in enumerate(dags):
         temp_g = dagmatrix_to_CausalDiagram(dag, var_names)
         dag_path = plot_causal_diagram_pydot(
-            temp_g, var_names, f"temp_dag_{i + 1}", f"DAG {i + 1}",
-            figures_dir=figures_dir, show_inline=False, consistent_sizing=True
+            temp_g,
+            var_names,
+            f"temp_dag_{i + 1}",
+            f"DAG {i + 1}",
+            figures_dir=figures_dir,
+            show_inline=False,
+            consistent_sizing=True,
         )
         dag_paths.append(dag_path)
-    
+
     # Create POMIS plots
     pomis_paths = []
     for i, dag in enumerate(dags):
         temp_g = dagmatrix_to_CausalDiagram(dag, var_names)
         pomis_vars = get_pomis_for_dag(dag, var_names, Y)
         pomis_path = plot_causal_diagram_pydot(
-            temp_g, var_names, f"temp_pomis_{i + 1}", f"DAG {i + 1} (POMIS: {pomis_vars})",
-            highlight_nodes=pomis_vars, figures_dir=figures_dir, show_inline=False, consistent_sizing=True
+            temp_g,
+            var_names,
+            f"temp_pomis_{i + 1}",
+            f"DAG {i + 1} (POMIS: {pomis_vars})",
+            highlight_nodes=pomis_vars,
+            figures_dir=figures_dir,
+            show_inline=False,
+            consistent_sizing=True,
         )
         pomis_paths.append(pomis_path)
-    
+
     # Create combined visualization
     combined_path = os.path.join(figures_dir, "combined_sanity_check.png")
-    
+
     # Calculate grid layout
     n_dags = len(dags)
     n_cols = max(3, n_dags + 2)  # Ground truth + CPDAG + DAGs + POMIS DAGs
     n_rows = 3  # Ground truth row, CPDAG row, DAGs+POMIS row
-    
+
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(4 * n_cols, 4 * n_rows))
     if n_rows == 1:
         axes = axes.reshape(1, -1)
-    
+
     # Adjust spacing to prevent title overlap
     plt.subplots_adjust(top=0.88, hspace=0.3, wspace=0.2)
-    
+
     # Load and display images
-    images = [
-        (ground_truth_path, "Ground Truth"),
-        (cpdag_path, "Discovered CPDAG")
-    ]
-    
+    images = [(ground_truth_path, "Ground Truth"), (cpdag_path, "Discovered CPDAG")]
+
     # Add DAG images
     for i, dag_path in enumerate(dag_paths):
         images.append((dag_path, f"DAG {i + 1}"))
-    
+
     # Add POMIS images
     for i, pomis_path in enumerate(pomis_paths):
         pomis_vars = get_pomis_for_dag(dags[i], var_names, Y)
         images.append((pomis_path, f"DAG {i + 1} (POMIS: {pomis_vars})"))
-    
+
     # Display images in grid
     for idx, (image_path, title) in enumerate(images):
         row = idx // n_cols
         col = idx % n_cols
-        
+
         if row < n_rows and col < n_cols:
             axes[row, col].imshow(plt.imread(image_path))
             axes[row, col].set_title(title, fontsize=12, fontweight="bold")
             axes[row, col].axis("off")
-    
+
     # Hide unused subplots
     for row in range(n_rows):
         for col in range(n_cols):
             if row * n_cols + col >= len(images):
                 axes[row, col].axis("off")
-    
-    plt.suptitle("Causal Discovery Sanity Check - Complete Analysis", 
-                 fontsize=16, fontweight="bold", y=0.96)
+
+    plt.suptitle(
+        "Causal Discovery Sanity Check - Complete Analysis",
+        fontsize=16,
+        fontweight="bold",
+        y=0.96,
+    )
     plt.savefig(combined_path, dpi=300, bbox_inches="tight")
-    
+
     if show_inline:
         plt.show()
     else:
         plt.close()
-    
+
     # Clean up temporary files
     temp_files = [ground_truth_path, cpdag_path] + dag_paths + pomis_paths
     for temp_file in temp_files:
@@ -423,5 +445,5 @@ def create_combined_sanity_check_visualization(
             os.remove(temp_file)
         except OSError:
             pass  # File might not exist
-    
+
     return combined_path
