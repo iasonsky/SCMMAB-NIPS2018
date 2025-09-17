@@ -15,8 +15,6 @@ This script implements the correct pipeline:
 # =============================================================================
 
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 from typing import Dict
 
 # Import the existing causal discovery pipeline
@@ -28,6 +26,9 @@ from npsem.bandits import play_bandits
 from npsem.scm_bandits import SCM_to_bandit_machine, arms_of, arm_types
 from npsem.utils import subseq
 from npsem.data_simulation import simulate_data_from_scm
+
+# Import modularized plotting functions
+from npsem.plotting import create_causal_discovery_plots
 # =============================================================================
 # CAUSAL DISCOVERY + BANDIT EXPERIMENT INTEGRATION
 # =============================================================================
@@ -215,111 +216,16 @@ def analyze_bandit_results(results: Dict, mu: np.ndarray, horizon: int) -> Dict:
 
 
 def create_visualizations(results: Dict, mu: np.ndarray, horizon: int, analysis: Dict):
-    """Create visualizations of the results in the style of the original paper."""
-    # Set up plotting style to match the paper (without LaTeX dependency)
-    import matplotlib as mpl
-
-    mpl.rc("font", family="sans-serif")
-    mpl.rc("font", serif="Helvetica")
-
-    # Use the same color palette as the paper
-    c__ = sns.color_palette("Set1", 4)
-    COLORS = [c__[0], c__[0], c__[1], c__[1], c__[2], c__[2], c__[3], c__[3]]
-
-    # Map strategies to colors (matching paper's approach)
-    strategy_algo_pairs = [(strategy, algo) for (strategy, algo) in analysis.keys()]
-    strategy_colors = {}
-    for i, (arm_strategy, bandit_algo) in enumerate(strategy_algo_pairs):
-        strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i]
-
-    # 1. Cumulative Regret Plot (Paper Style)
-    fig, ax = plt.subplots(1, 1, figsize=(8, 5))
-
-    for (arm_strategy, bandit_algo), data in analysis.items():
-        cumulative_regret = data["cumulative_regret"]
-        mean_regret = np.mean(cumulative_regret, axis=0)
-        std_regret = np.std(cumulative_regret, axis=0)
-
-        # Use standard deviation for bands (like the paper)
-        lower, upper = mean_regret - std_regret, mean_regret + std_regret
-
-        color = strategy_colors.get((arm_strategy, bandit_algo), "gray")
-        linestyle = "-" if bandit_algo == "TS" else "--"
-
-        # Sparse time points for cleaner visualization (like paper)
-        from npsem.viz_util import sparse_index
-
-        time_points = sparse_index(horizon, 200)
-
-        # Plot with paper's styling
-        ax.plot(
-            time_points,
-            mean_regret[time_points],
-            lw=1,
-            label=arm_strategy.split(" ")[0]
-            if "(TS)" in f"{arm_strategy} ({bandit_algo})"
-            else None,
-            color=color,
-            linestyle=linestyle,
-        )
-
-        # Fill between with paper's alpha
-        ax.fill_between(
-            time_points,
-            lower[time_points],
-            upper[time_points],
-            color=color,
-            alpha=0.1,  # Paper uses band_alpha=0.1
-            lw=0,
-        )
-
-    # Paper-style formatting
-    ax.set_xlabel("Trials")
-    ax.set_ylabel("Cum. Regrets")
-    ax.legend(loc=2, frameon=False)  # Paper uses loc=2, frameon=False
-
-    # Remove spines and add paper-style formatting
-    sns.despine()
-
-    plt.tight_layout()
-    plt.savefig("causal_discovery_bandit_results.png", dpi=300, bbox_inches="tight")
-    plt.show()
-
-    # 2. Final Regret Comparison
-    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-
-    strategies = []
-    final_regrets = []
-    errors = []
-
-    for (arm_strategy, bandit_algo), data in analysis.items():
-        strategies.append(f"{arm_strategy}\n({bandit_algo})")
-        final_regrets.append(data["mean_final_regret"])
-        errors.append(
-            1.96 * data["std_final_regret"] / np.sqrt(len(data["final_regret"]))
-        )
-
-    x_pos = np.arange(len(strategies))
-    bars = ax.bar(x_pos, final_regrets, yerr=errors, capsize=5, alpha=0.7)
-
-    # Color bars by strategy
-    for i, (arm_strategy, bandit_algo) in enumerate(analysis.keys()):
-        color = strategy_colors.get(arm_strategy, "gray")
-        bars[i].set_color(color)
-
-    ax.set_xlabel("Strategy", fontsize=12)
-    ax.set_ylabel("Final Regret", fontsize=12)
-    ax.set_title("Final Regret Comparison", fontsize=14)
-    ax.set_xticks(x_pos)
-    ax.set_xticklabels(strategies)
-    ax.grid(True, alpha=0.3)
-
-    plt.tight_layout()
-    plt.savefig("final_regret_comparison.png", dpi=300, bbox_inches="tight")
-    plt.show()
-
-    print(
-        "📊 Visualizations saved as 'causal_discovery_bandit_results.png' and 'final_regret_comparison.png'"
+    """Create visualizations using modular plotting functions."""
+    create_causal_discovery_plots(
+        analysis=analysis,
+        horizon=horizon,
+        save_dir=".",
+        show_plots=True,
+        use_confidence_intervals=False,  # Use standard deviation like original
+        y_lim=None,  # No y-axis limit like original
+        x_ticks=None,  # Use default x-axis ticks like original
+        x_tick_labels=None,
     )
 
 
