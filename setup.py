@@ -10,7 +10,7 @@ setup(
     python_requires=">=3.9",
     install_requires=[
         "numpy>=2.3.0",
-        "scipy>=1.16.0", 
+        "scipy>=1.16.0",
         "joblib>=1.5.2",
         "matplotlib>=3.10.0",
         "seaborn>=0.13.0",

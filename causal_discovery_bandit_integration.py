@@ -20,12 +20,7 @@ import seaborn as sns
 from typing import Dict, List, Tuple, Optional
 
 # Import the existing causal discovery pipeline
-from test_full_pipeline import (
-    pc_cpdag_adjacency,
-    cl_cpdag_to_pcalg,
-    enumerate_dags_from_cpdag,
-    pomis_union_over_dags,
-)
+from npsem.causal_pipeline import run_causal_discovery_pipeline
 
 # Import SCM examples and bandit framework
 from npsem.NIPS2018POMIS_exp.scm_examples import chain_SCM
@@ -149,21 +144,12 @@ def run_discovery_bandit_experiment(
 
     # Step 2: Causal Discovery (using existing pipeline)
     print("\n2. Running PC algorithm for causal discovery...")
-    A_cpdag_cl, names_pc = pc_cpdag_adjacency(
+    A_cpdag_cl, dags, pomis_union = run_causal_discovery_pipeline(
         data, var_names, alpha=alpha, save_plot=save_plots
     )
     print("   Discovered CPDAG adjacency matrix:")
     print(f"   {A_cpdag_cl}")
-
-    # Step 3: Convert to pcalg format and enumerate DAGs
-    print("\n3. Enumerating DAGs in Markov equivalence class...")
-    A_cpdag = cl_cpdag_to_pcalg(A_cpdag_cl)
-    dags = enumerate_dags_from_cpdag(A_cpdag, names_pc)
     print(f"   Found {len(dags)} DAGs in the MEC")
-
-    # Step 4: Compute POMIS union across all DAGs in MEC
-    print("\n4. Computing POMIS union across all DAGs in MEC...")
-    pomis_union = pomis_union_over_dags(dags, names_pc, Y=Y, enforce_Y_sink=True)
     print(f"   POMIS union: {pomis_union}")
 
     # Step 5: Run bandit experiments using ground truth SCM
