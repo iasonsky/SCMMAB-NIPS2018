@@ -276,8 +276,10 @@ def chain_SCM(devised=True, seed=None):
     Binary Markovian chain SCM: Z -> X -> Y
 
     - Z is exogenous: Z := U_Z
-    - X depends on Z with small noise (when devised=True): X := Z XOR U_X
-    - Y depends on X with small noise: Y := X XOR U_Y
+    - X depends on Z with small noise (when devised=True): X := Z OR U_X
+    - Y depends on X with small noise: Y := X OR U_Y
+
+    Uses OR operations instead of XOR for stronger correlations that PC algorithm can detect.
 
     Returns
     -------
@@ -287,12 +289,12 @@ def chain_SCM(devised=True, seed=None):
     with seeded(seed):
         G = chain_CD()
 
-        # parameterization for U (keep noise small for clearer dependencies when devised=True)
+        # parameterization for U (keep noise very small for stronger dependencies when devised=True)
         if devised:
             mu1 = {
-                "U_Z": rand_bw(0.1, 0.9, precision=2),  # Z prevalence
-                "U_X": rand_bw(0.01, 0.2, precision=2),  # small noise on X
-                "U_Y": rand_bw(0.01, 0.2, precision=2),  # small noise on Y
+                "U_Z": rand_bw(0.3, 0.7, precision=2),  # Z prevalence
+                "U_X": rand_bw(0.01, 0.1, precision=2),  # very small noise on X
+                "U_Y": rand_bw(0.01, 0.1, precision=2),  # very small noise on Y
             }
         else:
             mu1 = {
@@ -308,8 +310,10 @@ def chain_SCM(devised=True, seed=None):
             G,
             F={
                 "Z": lambda v: v["U_Z"],
-                "X": lambda v: v["U_X"] ^ v["Z"],  # X = Z ⊕ U_X
-                "Y": lambda v: v["U_Y"] ^ v["X"],  # Y = X ⊕ U_Y
+                "X": lambda v: v["Z"]
+                | v["U_X"],  # X = Z ∨ U_X (OR for stronger correlation)
+                "Y": lambda v: v["X"]
+                | v["U_Y"],  # Y = X ∨ U_Y (OR for stronger correlation)
             },
             P_U=P_U,
             D=domains,
