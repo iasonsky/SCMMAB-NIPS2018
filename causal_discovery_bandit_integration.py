@@ -17,7 +17,7 @@ This script implements the correct pipeline:
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Dict, List, Tuple, Optional
+from typing import Dict
 
 # Import the existing causal discovery pipeline
 from npsem.causal_pipeline import run_causal_discovery_pipeline
@@ -26,62 +26,8 @@ from npsem.causal_pipeline import run_causal_discovery_pipeline
 from npsem.NIPS2018POMIS_exp.scm_examples import chain_SCM
 from npsem.bandits import play_bandits
 from npsem.scm_bandits import SCM_to_bandit_machine, arms_of, arm_types
-from npsem.utils import subseq, seeded
-
-# =============================================================================
-# DATA SIMULATION FROM GROUND TRUTH
-# =============================================================================
-
-
-def simulate_data_from_scm(
-    scm, n_samples: int = 4000, seed: Optional[int] = None
-) -> Tuple[np.ndarray, List[str]]:
-    """
-    Simulate data from a ground truth SCM.
-
-    Parameters:
-    -----------
-    scm : StructuralCausalModel
-        Ground truth SCM to simulate from
-    n_samples : int
-        Number of samples to generate
-    seed : int, optional
-        Random seed for reproducibility
-
-    Returns:
-    --------
-    data : np.ndarray
-        Simulated data matrix (n_samples x n_variables)
-    var_names : List[str]
-        Variable names in order
-    """
-    with seeded(seed):
-        # Get variable names in causal order
-        var_names = list(scm.G.causal_order())
-
-        # Generate samples
-        data = []
-        for _ in range(n_samples):
-            sample = {}
-
-            # Sample exogenous variables
-            for u in scm.G.U | scm.more_U:
-                sample[u] = np.random.choice(scm.D[u])
-
-            # Evaluate structural equations in causal order
-            for var in var_names:
-                if var in scm.F:
-                    sample[var] = scm.F[var](sample)
-                else:
-                    # If no structural equation, sample from domain
-                    sample[var] = np.random.choice(scm.D[var])
-
-            # Extract values in correct order
-            data.append([sample[var] for var in var_names])
-
-        return np.array(data), var_names
-
-
+from npsem.utils import subseq
+from npsem.data_simulation import simulate_data_from_scm
 # =============================================================================
 # BANDIT EXPERIMENT INTEGRATION
 # =============================================================================
@@ -142,17 +88,17 @@ def run_discovery_bandit_experiment(
     print(f"   Generated {data.shape[0]} samples for variables: {var_names}")
     print(f"   Ground truth SCM: {ground_truth_scm.G}")
 
-    # Step 2: Causal Discovery (using existing pipeline)
+    # Step 2: Causal Discovery
     print("\n2. Running PC algorithm for causal discovery...")
     A_cpdag_cl, dags, pomis_union = run_causal_discovery_pipeline(
-        data, var_names, alpha=alpha, save_plot=save_plots
+        data, var_names, ind_test="gsq", alpha=alpha, save_plot=save_plots
     )
     print("   Discovered CPDAG adjacency matrix:")
     print(f"   {A_cpdag_cl}")
     print(f"   Found {len(dags)} DAGs in the MEC")
     print(f"   POMIS union: {pomis_union}")
 
-    # Step 5: Run bandit experiments using ground truth SCM
+    # Step 3: Run bandit experiments using ground truth SCM
     print("\n5. Running bandit experiments using ground truth SCM...")
     mu, arm_setting = SCM_to_bandit_machine(ground_truth_scm, Y)
     print(f"   Created {len(mu)} bandit arms")
@@ -368,7 +314,7 @@ def main():
     results = run_discovery_bandit_experiment(
         ground_truth_scm=ground_truth_scm,
         Y="Y",
-        n_samples=4000,
+        n_samples=10000,
         alpha=0.01,
         num_trials=50,  # Reduced for demo
         horizon=2000,  # Reduced for demo
