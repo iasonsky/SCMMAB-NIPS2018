@@ -14,9 +14,8 @@ from typing import List, Optional
 from collections import defaultdict
 
 
-def ensure_figures_directory(base_dir: str = ".") -> str:
+def ensure_figures_directory(figures_dir: str = "figures") -> str:
     """Ensure a figures directory exists and return its path."""
-    figures_dir = os.path.join(base_dir, "figures")
     os.makedirs(figures_dir, exist_ok=True)
     return figures_dir
 
@@ -28,7 +27,6 @@ def plot_causal_diagram_pydot(
     title: Optional[str] = None,
     highlight_nodes: Optional[List[str]] = None,
     figures_dir: Optional[str] = None,
-    show_inline: bool = True,
     consistent_sizing: bool = False,
 ) -> str:
     """
@@ -48,8 +46,6 @@ def plot_causal_diagram_pydot(
         Nodes to highlight in red
     figures_dir : str, optional
         Directory to save figures in (defaults to ./figures/)
-    show_inline : bool
-        Whether to display the plot inline
 
     Returns:
     --------
@@ -58,7 +54,7 @@ def plot_causal_diagram_pydot(
     """
     # Set up directory
     if figures_dir is None:
-        figures_dir = ensure_figures_directory()
+        figures_dir = ensure_figures_directory("figures")
 
     full_path = os.path.join(figures_dir, f"{filename}.png")
 
@@ -109,14 +105,6 @@ def plot_causal_diagram_pydot(
     # Save the graph
     graph.write_png(full_path)
 
-    # Display inline if requested
-    if show_inline:
-        plt.figure(figsize=(6, 5))
-        plt.imshow(plt.imread(full_path))
-        plt.axis("off")
-        if title:
-            plt.title(title, fontsize=14, fontweight="bold", pad=20)
-        plt.tight_layout()
 
     return full_path
 
@@ -127,7 +115,6 @@ def plot_cpdag_pydot(
     filename: str,
     title: Optional[str] = None,
     figures_dir: Optional[str] = None,
-    show_inline: bool = True,
     consistent_sizing: bool = False,
 ) -> str:
     """
@@ -145,8 +132,6 @@ def plot_cpdag_pydot(
         Title for the plot
     figures_dir : str, optional
         Directory to save figures in (defaults to ./figures/)
-    show_inline : bool
-        Whether to display the plot inline
 
     Returns:
     --------
@@ -155,7 +140,7 @@ def plot_cpdag_pydot(
     """
     # Set up directory
     if figures_dir is None:
-        figures_dir = ensure_figures_directory()
+        figures_dir = ensure_figures_directory("figures")
 
     full_path = os.path.join(figures_dir, f"{filename}.png")
 
@@ -217,14 +202,6 @@ def plot_cpdag_pydot(
     # Save the graph
     graph.write_png(full_path)
 
-    # Display inline if requested
-    if show_inline:
-        plt.figure(figsize=(6, 5))
-        plt.imshow(plt.imread(full_path))
-        plt.axis("off")
-        if title:
-            plt.title(title, fontsize=14, fontweight="bold", pad=20)
-        plt.tight_layout()
 
     return full_path
 
@@ -296,7 +273,6 @@ def create_combined_sanity_check_visualization(
     var_names: List[str],
     Y: str,
     figures_dir: Optional[str] = None,
-    show_inline: bool = True,
 ) -> str:
     """
     Create a single comprehensive visualization showing all sanity check results.
@@ -315,8 +291,6 @@ def create_combined_sanity_check_visualization(
         Target variable for POMIS analysis
     figures_dir : str, optional
         Directory to save figures in (defaults to ./figures/)
-    show_inline : bool
-        Whether to display the plot inline
 
     Returns:
     --------
@@ -327,7 +301,8 @@ def create_combined_sanity_check_visualization(
 
     # Set up directory
     if figures_dir is None:
-        figures_dir = ensure_figures_directory()
+        figures_dir = "figures"
+    figures_dir = ensure_figures_directory(figures_dir)
 
     # Create individual plots first with consistent sizing
     ground_truth_path = plot_causal_diagram_pydot(
@@ -336,7 +311,6 @@ def create_combined_sanity_check_visualization(
         "temp_ground_truth",
         "Ground Truth",
         figures_dir=figures_dir,
-        show_inline=False,
         consistent_sizing=True,
     )
 
@@ -346,7 +320,6 @@ def create_combined_sanity_check_visualization(
         "temp_cpdag",
         "Discovered CPDAG",
         figures_dir=figures_dir,
-        show_inline=False,
         consistent_sizing=True,
     )
 
@@ -360,7 +333,6 @@ def create_combined_sanity_check_visualization(
             f"temp_dag_{i + 1}",
             f"DAG {i + 1}",
             figures_dir=figures_dir,
-            show_inline=False,
             consistent_sizing=True,
         )
         dag_paths.append(dag_path)
@@ -377,7 +349,6 @@ def create_combined_sanity_check_visualization(
             f"DAG {i + 1} (POMIS: {pomis_vars})",
             highlight_nodes=pomis_vars,
             figures_dir=figures_dir,
-            show_inline=False,
             consistent_sizing=True,
         )
         pomis_paths.append(pomis_path)
@@ -433,10 +404,7 @@ def create_combined_sanity_check_visualization(
     )
     plt.savefig(combined_path, dpi=300, bbox_inches="tight")
 
-    if show_inline:
-        plt.show()
-    else:
-        plt.close()
+    plt.close()
 
     # Clean up temporary files
     temp_files = [ground_truth_path, cpdag_path] + dag_paths + pomis_paths

@@ -455,7 +455,7 @@ def plot_final_regret_comparison_from_analysis(
 def create_causal_discovery_plots(
     analysis: Dict,
     horizon: int = 5000,
-    save_dir: str = ".",
+    save_dir: str = "experiment_results",
     show_plots: bool = True,
     use_confidence_intervals: bool = False,
     y_lim: Optional[Tuple[float, float]] = None,
@@ -475,6 +475,9 @@ def create_causal_discovery_plots(
         x_tick_labels: X-axis tick labels
     """
     import os
+    
+    # Ensure the save directory exists
+    os.makedirs(save_dir, exist_ok=True)
     
     # Create cumulative regret plot
     cumulative_regret_path = os.path.join(save_dir, "causal_discovery_bandit_results.png")
@@ -498,5 +501,5 @@ def create_causal_discovery_plots(
     )
     
     print(
-        "📊 Visualizations saved as 'causal_discovery_bandit_results.png' and 'final_regret_comparison.png'"
+        f"📊 Visualizations saved in '{save_dir}/' as 'causal_discovery_bandit_results.png' and 'final_regret_comparison.png'"
     )

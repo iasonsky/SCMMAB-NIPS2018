@@ -43,6 +43,7 @@ def run_discovery_bandit_experiment(
     horizon: int = 5000,
     n_jobs: int = 1,
     save_plots: bool = True,
+    save_dir: str = "experiment_results",
 ) -> Dict:
     """
     Run the complete causal discovery + bandit experiment pipeline.
@@ -103,6 +104,7 @@ def run_discovery_bandit_experiment(
         alpha=alpha,
         sanity_check=True,
         ground_truth_scm=ground_truth_scm,
+        save_dir=save_dir,
     )
     print("   Discovered CPDAG adjacency matrix:")
     print(f"   {A_cpdag_cl}")
@@ -153,7 +155,7 @@ def run_discovery_bandit_experiment(
 
     if save_plots:
         print("\n7. Creating visualizations...")
-        create_visualizations(results, mu, horizon, analysis_results)
+        create_visualizations(results, mu, horizon, analysis_results, save_dir=save_dir)
 
     # Compile final results
     final_results = {
@@ -215,13 +217,13 @@ def analyze_bandit_results(results: Dict, mu: np.ndarray, horizon: int) -> Dict:
     return analysis
 
 
-def create_visualizations(results: Dict, mu: np.ndarray, horizon: int, analysis: Dict):
+def create_visualizations(results: Dict, mu: np.ndarray, horizon: int, analysis: Dict, save_dir: str):
     """Create visualizations using modular plotting functions."""
     create_causal_discovery_plots(
         analysis=analysis,
         horizon=horizon,
-        save_dir=".",
         show_plots=True,
+        save_dir=save_dir,
         use_confidence_intervals=False,  # Use standard deviation like original
         y_lim=None,  # No y-axis limit like original
         x_ticks=None,  # Use default x-axis ticks like original

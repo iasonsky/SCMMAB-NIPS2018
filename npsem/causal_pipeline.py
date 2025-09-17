@@ -25,6 +25,7 @@ def run_causal_discovery_pipeline(
     Y: str = "Y",
     sanity_check: bool = False,
     ground_truth_scm: Optional[object] = None,
+    save_dir: str = "figures",
 ) -> Tuple[np.ndarray, List[np.ndarray], Set[Tuple[str, ...]]]:
     """
     Run complete causal discovery pipeline: CPDAG → DAGs → POMIS union.
@@ -95,7 +96,7 @@ def run_causal_discovery_pipeline(
                 dags=dags,
                 var_names=var_names,
                 Y=Y,
-                show_inline=True,
+                figures_dir=save_dir,
             )
             print(f"📊 Combined visualization saved: {combined_path}")
 
