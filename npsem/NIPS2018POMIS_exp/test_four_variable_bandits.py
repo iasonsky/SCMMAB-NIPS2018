@@ -46,63 +46,77 @@ def compute_cumulative_regret(rewards: np.ndarray, mu_star: float) -> np.ndarray
 def plot_cumulative_regret(
     results, mu, horizon=10000, save_path="four_variable_regret.png"
 ):
-    """Plot average cumulative regret over time."""
+    """Plot average cumulative regret over time in the style of the original paper."""
     mu_star = np.max(mu)
 
-    # Set up the plot
-    plt.figure(figsize=(10, 6))
-    sns.set_style("whitegrid")
-
-    # Define colors for each arm strategy
+    # Set up plotting style to match the paper
+    import matplotlib as mpl
+    mpl.rc("font", family="sans-serif")
+    mpl.rc("font", serif="Helvetica")
+    
+    # Use specific colors as requested: Red for BF, Purple for MIS, Blue for POMIS
     strategy_colors = {
         "Brute-force": "red",
-        "MIS": "purple",
-        "POMIS": "blue",
-        # "All-at-once": "green",
+        "MIS": "purple", 
+        "POMIS": "blue"
     }
+
+    # Set up the plot with paper's figure size
+    fig, ax = plt.subplots(1, 1, figsize=(8, 5))
 
     for i, ((arm_strategy, bandit_algo), (arms, rewards)) in enumerate(results.items()):
         cumulative_regret = compute_cumulative_regret(rewards, mu_star)
         mean_regret = np.mean(cumulative_regret, axis=0)
         std_regret = np.std(cumulative_regret, axis=0)
 
-        # Calculate 95% confidence interval
+        # Use 95% confidence intervals (like the paper)
+        from scipy import stats
         n_trials = cumulative_regret.shape[0]
-        se_regret = std_regret / np.sqrt(n_trials)
-        # Use t-distribution critical value for 95% CI (approximated with normal for large n)
-        t_critical = 1.96  # 95% confidence interval
-        ci_margin = t_critical * se_regret
-
-        label = f"{arm_strategy} ({bandit_algo})"
-        color = strategy_colors[arm_strategy]
-
-        # Use solid line for TS, dashed line for UCB
+        confidence_level = 0.95
+        t_value = stats.t.ppf((1 + confidence_level) / 2, n_trials - 1)
+        margin_error = t_value * std_regret / np.sqrt(n_trials)
+        lower, upper = mean_regret - margin_error, mean_regret + margin_error
+        
+        color = strategy_colors.get(arm_strategy, "gray")
         linestyle = "-" if bandit_algo == "TS" else "--"
 
-        # Plot mean with 95% confidence interval
-        trials = np.arange(1, horizon + 1)
-        plt.plot(
-            trials,
-            mean_regret,
-            label=label,
+        # Sparse time points for cleaner visualization (like paper)
+        from npsem.viz_util import sparse_index
+        time_points = sparse_index(horizon, 200)
+
+        # Plot with paper's styling
+        ax.plot(
+            time_points,
+            mean_regret[time_points],
+            lw=1,
+            label=arm_strategy.split(" ")[0] if "(TS)" in f"{arm_strategy} ({bandit_algo})" else None,
             color=color,
             linestyle=linestyle,
-            linewidth=2,
         )
-        plt.fill_between(
-            trials,
-            mean_regret - ci_margin,
-            mean_regret + ci_margin,
-            alpha=0.2,
+        
+        # Fill between with 95% confidence intervals
+        ax.fill_between(
+            time_points,
+            lower[time_points],
+            upper[time_points],
             color=color,
+            alpha=0.1,  # Paper uses band_alpha=0.1
+            lw=0,
         )
 
-    plt.xlabel("Trials", fontsize=12)
-    plt.ylabel("Cumulative Regret", fontsize=12)
-    plt.title("Average Cumulative Regret - Four Variable SCM", fontsize=14)
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-
+    # Paper-style formatting
+    ax.set_xlabel("Trials")
+    ax.set_ylabel("Cum. Regrets")
+    ax.legend(loc=2, frameon=False)  # Paper uses loc=2, frameon=False
+    
+    # Set y-axis limit to 200 and x-axis ticks to 0, 5k, 10k
+    ax.set_ylim(0, 200)
+    ax.set_xticks([0, 5000, 10000])
+    ax.set_xticklabels(['0', '5k', '10k'])
+    
+    # Remove spines and add paper-style formatting
+    sns.despine()
+    
     # Save the plot
     plt.tight_layout()
     plt.savefig(save_path, dpi=300, bbox_inches="tight")
