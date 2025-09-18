@@ -105,7 +105,6 @@ def plot_causal_diagram_pydot(
     # Save the graph
     graph.write_png(full_path)
 
-
     return full_path
 
 
@@ -201,7 +200,6 @@ def plot_cpdag_pydot(
 
     # Save the graph
     graph.write_png(full_path)
-
 
     return full_path
 

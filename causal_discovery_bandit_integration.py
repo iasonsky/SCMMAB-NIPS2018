@@ -217,7 +217,9 @@ def analyze_bandit_results(results: Dict, mu: np.ndarray, horizon: int) -> Dict:
     return analysis
 
 
-def create_visualizations(results: Dict, mu: np.ndarray, horizon: int, analysis: Dict, save_dir: str):
+def create_visualizations(
+    results: Dict, mu: np.ndarray, horizon: int, analysis: Dict, save_dir: str
+):
     """Create visualizations using modular plotting functions."""
     create_causal_discovery_plots(
         analysis=analysis,

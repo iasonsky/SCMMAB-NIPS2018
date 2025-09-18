@@ -285,10 +285,10 @@ def plot_cumulative_regret_from_analysis(
     x_tick_labels: Optional[Tuple[str, str, str]] = None,
 ) -> None:
     """Plot cumulative regret from analysis data (for causal discovery integration).
-    
-    This function is designed to work with the analysis format from 
+
+    This function is designed to work with the analysis format from
     causal_discovery_bandit_integration.py, which already has cumulative regret computed.
-    
+
     Args:
         analysis: Dictionary containing analysis results with 'cumulative_regret' key
         horizon: Time horizon for the experiment
@@ -300,39 +300,40 @@ def plot_cumulative_regret_from_analysis(
         x_tick_labels: X-axis tick labels
     """
     setup_paper_style()
-    
+
     # Use the same color palette as the paper
     c__ = sns.color_palette("Set1", 4)
     COLORS = [c__[0], c__[0], c__[1], c__[1], c__[2], c__[2], c__[3], c__[3]]
-    
+
     # Map strategies to colors (matching paper's approach)
     strategy_algo_pairs = [(strategy, algo) for (strategy, algo) in analysis.keys()]
     strategy_colors = {}
     for i, (arm_strategy, bandit_algo) in enumerate(strategy_algo_pairs):
         strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i]
-    
+
     # Create the plot
     fig, ax = plt.subplots(1, 1, figsize=(8, 5))
-    
+
     for (arm_strategy, bandit_algo), data in analysis.items():
         cumulative_regret = data["cumulative_regret"]
         mean_regret = np.mean(cumulative_regret, axis=0)
         std_regret = np.std(cumulative_regret, axis=0)
-        
+
         if use_confidence_intervals:
             # Use 95% confidence intervals
             mean_val, lower, upper = compute_confidence_intervals(cumulative_regret)
         else:
             # Use standard deviation for bands (like the paper)
             lower, upper = mean_regret - std_regret, mean_regret + std_regret
-        
+
         color = strategy_colors.get((arm_strategy, bandit_algo), "gray")
         linestyle = "-" if bandit_algo == "TS" else "--"
-        
+
         # Sparse time points for cleaner visualization (like paper)
         from npsem.viz_util import sparse_index
+
         time_points = sparse_index(horizon, 200)
-        
+
         # Plot with paper's styling
         ax.plot(
             time_points,
@@ -344,7 +345,7 @@ def plot_cumulative_regret_from_analysis(
             color=color,
             linestyle=linestyle,
         )
-        
+
         # Fill between with paper's alpha
         ax.fill_between(
             time_points,
@@ -354,31 +355,31 @@ def plot_cumulative_regret_from_analysis(
             alpha=0.1,  # Paper uses band_alpha=0.1
             lw=0,
         )
-    
+
     # Paper-style formatting
     ax.set_xlabel("Trials")
     ax.set_ylabel("Cum. Regrets")
     ax.legend(loc=2, frameon=False)  # Paper uses loc=2, frameon=False
-    
+
     # Apply custom axis settings if provided
     if y_lim is not None:
         ax.set_ylim(y_lim)
     if x_ticks is not None and x_tick_labels is not None:
         ax.set_xticks(x_ticks)
         ax.set_xticklabels(x_tick_labels)
-    
+
     # Remove spines and add paper-style formatting
     sns.despine()
-    
+
     # Save the plot
     plt.tight_layout()
     plt.savefig(save_path, dpi=300, bbox_inches="tight")
-    
+
     if show_plot:
         plt.show()
     else:
         plt.close()
-    
+
     print(f"📊 Plot saved as: {save_path}")
 
 
@@ -389,7 +390,7 @@ def plot_final_regret_comparison_from_analysis(
     figure_size: Tuple[float, float] = (10, 6),
 ) -> None:
     """Plot final regret comparison from analysis data (for causal discovery integration).
-    
+
     Args:
         analysis: Dictionary containing analysis results with regret statistics
         save_path: Path to save the plot
@@ -397,58 +398,58 @@ def plot_final_regret_comparison_from_analysis(
         figure_size: Size of the figure
     """
     setup_paper_style()
-    
+
     # Use the same color palette as the paper
     c__ = sns.color_palette("Set1", 4)
     COLORS = [c__[0], c__[0], c__[1], c__[1], c__[2], c__[2], c__[3], c__[3]]
-    
+
     # Map strategies to colors (matching paper's approach)
     strategy_algo_pairs = [(strategy, algo) for (strategy, algo) in analysis.keys()]
     strategy_colors = {}
     for i, (arm_strategy, bandit_algo) in enumerate(strategy_algo_pairs):
         strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i]
-    
+
     # Extract data for plotting
     strategies = []
     final_regrets = []
     errors = []
-    
+
     for (arm_strategy, bandit_algo), data in analysis.items():
         strategies.append(f"{arm_strategy}\n({bandit_algo})")
         final_regrets.append(data["mean_final_regret"])
         errors.append(
             1.96 * data["std_final_regret"] / np.sqrt(len(data["final_regret"]))
         )
-    
+
     # Create the plot
     fig, ax = plt.subplots(1, 1, figsize=figure_size)
-    
+
     x_pos = np.arange(len(strategies))
     bars = ax.bar(x_pos, final_regrets, yerr=errors, capsize=5, alpha=0.7)
-    
+
     # Color bars by strategy
     for i, (arm_strategy, bandit_algo) in enumerate(analysis.keys()):
         color = strategy_colors.get((arm_strategy, bandit_algo), "gray")
         bars[i].set_color(color)
-    
+
     ax.set_xlabel("Strategy", fontsize=12)
     ax.set_ylabel("Final Regret", fontsize=12)
     ax.set_title("Final Regret Comparison", fontsize=14)
     ax.set_xticks(x_pos)
     ax.set_xticklabels(strategies)
     ax.grid(True, alpha=0.3)
-    
+
     # Remove spines
     sns.despine()
-    
+
     plt.tight_layout()
     plt.savefig(save_path, dpi=300, bbox_inches="tight")
-    
+
     if show_plot:
         plt.show()
     else:
         plt.close()
-    
+
     print(f"📊 Final regret comparison saved as: {save_path}")
 
 
@@ -463,7 +464,7 @@ def create_causal_discovery_plots(
     x_tick_labels: Optional[Tuple[str, str, str]] = None,
 ) -> None:
     """Create comprehensive plots for causal discovery + bandit experiments.
-    
+
     Args:
         analysis: Dictionary containing analysis results
         horizon: Time horizon for the experiment
@@ -475,12 +476,14 @@ def create_causal_discovery_plots(
         x_tick_labels: X-axis tick labels
     """
     import os
-    
+
     # Ensure the save directory exists
     os.makedirs(save_dir, exist_ok=True)
-    
+
     # Create cumulative regret plot
-    cumulative_regret_path = os.path.join(save_dir, "causal_discovery_bandit_results.png")
+    cumulative_regret_path = os.path.join(
+        save_dir, "causal_discovery_bandit_results.png"
+    )
     plot_cumulative_regret_from_analysis(
         analysis=analysis,
         horizon=horizon,
@@ -491,7 +494,7 @@ def create_causal_discovery_plots(
         x_ticks=x_ticks,
         x_tick_labels=x_tick_labels,
     )
-    
+
     # Create final regret comparison plot
     final_regret_path = os.path.join(save_dir, "final_regret_comparison.png")
     plot_final_regret_comparison_from_analysis(
@@ -499,7 +502,7 @@ def create_causal_discovery_plots(
         save_path=final_regret_path,
         show_plot=show_plots,
     )
-    
+
     print(
         f"📊 Visualizations saved in '{save_dir}/' as 'causal_discovery_bandit_results.png' and 'final_regret_comparison.png'"
     )

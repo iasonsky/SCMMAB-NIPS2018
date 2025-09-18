@@ -320,3 +320,148 @@ def chain_SCM(devised=True, seed=None):
             more_U={"U_Z", "U_X", "U_Y"},
         )
         return M, mu1
+
+
+def frontdoor_CD(manipulable_vars=None):
+    """Frontdoor Causal Diagram
+
+    Variables: X, Y, Z
+    Observed variables: N = {Z}
+    Directed edges: X -> Z, Z -> Y
+    Bidirected edge: X <-> Y (confounding)
+    """
+    X, Y, Z = "X", "Y", "Z"
+
+    # If no manipulable_vars specified, default excludes Z (since N = {Z})
+    if manipulable_vars is None:
+        manipulable_vars = {X, Y}
+
+    return CausalDiagram(
+        {X, Y, Z},
+        [(X, Z), (Z, Y)],  # directed edges
+        [(X, Y, "U_XY")],  # bidirected edge for confounding
+        manipulable_vars=manipulable_vars,
+    )
+
+
+def frontdoor_SCM(seed=None):
+    """Frontdoor SCM with exact parameter values from specification
+
+    Based on frontdoor graph specification:
+    - P(U_X = 1) = 0.5, P(U_Y = 1) = 0.4, P(U_Z = 1) = 0.4, P(U_XY = 1) = 0.5
+    - f_X = u_X XOR u_XY
+    - f_Z = u_Z XOR x
+    - f_Y = (u_Y AND u_XY) XOR z
+
+    Returns
+    -------
+    M : StructuralCausalModel
+    mu1 : dict   # P(U=1) for each exogenous variable
+    """
+    with seeded(seed):
+        G = frontdoor_CD()
+
+        # Exact parameter values from the specification
+        mu1 = {
+            "U_X": 0.5,
+            "U_Y": 0.4,
+            "U_Z": 0.4,
+            "U_XY": 0.5,
+        }
+
+        P_U = default_P_U(mu1)
+        domains = defaultdict(lambda: (0, 1))
+
+        # Structural equations matching the specification exactly
+        M = StructuralCausalModel(
+            G,
+            F={
+                "X": lambda v: v["U_X"] ^ v["U_XY"],  # f_X = u_X XOR u_XY
+                "Z": lambda v: v["U_Z"] ^ v["X"],  # f_Z = u_Z XOR x
+                "Y": lambda v: (v["U_Y"] & v["U_XY"])
+                ^ v["Z"],  # f_Y = (u_Y AND u_XY) XOR z
+            },
+            P_U=P_U,
+            D=domains,
+            more_U={"U_X", "U_Y", "U_Z"},
+        )
+        return M, mu1
+
+
+def six_variable_CD(manipulable_vars=None):
+    """6-variable Causal Diagram
+
+    Variables: A, B, C, D, E, Y
+    Observed variables: N = {A, C}
+    Directed edges: B → C, C → D, A → E, C → E, D → Y, E → Y
+    Bidirected edges: A ↔ Y (U_AY), B ↔ Y (U_BY)
+    """
+    A, B, C, D, E, Y = "A", "B", "C", "D", "E", "Y"
+
+    # If no manipulable_vars specified, default excludes A and C (since N = {A, C})
+    if manipulable_vars is None:
+        manipulable_vars = {B, D, E, Y}
+
+    return CausalDiagram(
+        {A, B, C, D, E, Y},
+        [(B, C), (C, D), (A, E), (C, E), (D, Y), (E, Y)],  # directed edges
+        [(A, Y, "U_AY"), (B, Y, "U_BY")],  # bidirected edges for confounding
+        manipulable_vars=manipulable_vars,
+    )
+
+
+def six_variable_SCM(seed=None):
+    """6-variable SCM with exact parameter values from specification
+
+    Based on 6-variable graph specification:
+    - P(U_A = 1) = 0.22, P(U_B = 1) = 0.2, P(U_C = 1) = 0.12, P(U_D = 1) = 0.2
+    - P(U_E = 1) = 0.04, P(U_Y = 1) = 0.87, P(U_BY = 1) = 0.04, P(U_AY = 1) = 0.45
+    - f_A = u_A XOR u_AY
+    - f_B = u_B XOR u_BY
+    - f_C = u_C XOR b
+    - f_D = u_D XOR c
+    - f_E = u_E XOR a XOR c
+    - f_Y = 1 - (u_Y XOR u_AY XOR u_BY XOR d XOR e)
+
+    Returns
+    -------
+    M : StructuralCausalModel
+    mu1 : dict   # P(U=1) for each exogenous variable
+    """
+    with seeded(seed):
+        G = six_variable_CD()
+
+        # Exact parameter values from the specification
+        mu1 = {
+            "U_A": 0.22,
+            "U_B": 0.2,
+            "U_C": 0.12,
+            "U_D": 0.2,
+            "U_E": 0.04,
+            "U_Y": 0.87,
+            "U_BY": 0.04,
+            "U_AY": 0.45,
+        }
+
+        P_U = default_P_U(mu1)
+        domains = defaultdict(lambda: (0, 1))
+
+        # Structural equations matching the specification exactly
+        M = StructuralCausalModel(
+            G,
+            F={
+                "A": lambda v: v["U_A"] ^ v["U_AY"],  # f_A = u_A XOR u_AY
+                "B": lambda v: v["U_B"] ^ v["U_BY"],  # f_B = u_B XOR u_BY
+                "C": lambda v: v["U_C"] ^ v["B"],  # f_C = u_C XOR b
+                "D": lambda v: v["U_D"] ^ v["C"],  # f_D = u_D XOR c
+                "E": lambda v: v["U_E"] ^ v["A"] ^ v["C"],  # f_E = u_E XOR a XOR c
+                "Y": lambda v: 1
+                ^ (
+                    v["U_Y"] ^ v["U_AY"] ^ v["U_BY"] ^ v["D"] ^ v["E"]
+                ),  # f_Y = 1 - (u_Y XOR u_AY XOR u_BY XOR d XOR e)
+            },
+            P_U=P_U,
+            D=domains,
+            more_U={"U_A", "U_B", "U_C", "U_D", "U_E", "U_Y"},
+        )
+        return M, mu1
