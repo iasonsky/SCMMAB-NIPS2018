@@ -36,3 +36,4 @@ bandit_results/
 four_variable_results/
 *.err
 *.out
+*.npz
