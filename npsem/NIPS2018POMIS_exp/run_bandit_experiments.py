@@ -35,6 +35,9 @@ def run_single_experiment(scm_name: str, quick: bool = False, show_plots: bool =
             config['num_trials'] = 50
             config['horizon'] = 1000
             
+        # Extract y_lim if present
+        y_lim = config.pop('y_lim', None)
+            
         # Create and run experiment
         experiment = BanditExperiment(
             scm_factory=scm_factory,
@@ -42,7 +45,7 @@ def run_single_experiment(scm_name: str, quick: bool = False, show_plots: bool =
             **config
         )
         
-        experiment.run_full_experiment(show_plots=show_plots)
+        experiment.run_full_experiment(show_plots=show_plots, y_lim=y_lim)
         return True
         
     except Exception as e:
@@ -95,13 +98,14 @@ def main():
 Examples:
   python run_bandit_experiments.py --list
   python run_bandit_experiments.py --scm frontdoor
+  python run_bandit_experiments.py --scm frontdoor four_variable six_variable
   python run_bandit_experiments.py --scm frontdoor --quick
   python run_bandit_experiments.py --all
   python run_bandit_experiments.py --all --quick
         """
     )
     
-    parser.add_argument("--scm", type=str, help="Run specific SCM")
+    parser.add_argument("--scm", type=str, nargs='+', help="Run specific SCM(s). Use space-separated list for multiple: --scm frontdoor four_variable six_variable")
     parser.add_argument("--all", action="store_true", help="Run all SCMs")
     parser.add_argument("--quick", action="store_true", help="Quick mode (T=1000, 50 trials)")
     parser.add_argument("--list", action="store_true", help="List available SCMs")
@@ -120,12 +124,14 @@ Examples:
     
     # Determine which SCMs to run
     if args.scm:
-        scm_names = [args.scm]
+        # args.scm is already a list of SCM names
+        scm_names = args.scm
     elif args.all:
         scm_names = registry.get_all_scm_names()
     else:
         print("❌ Must specify --scm SCM_NAME, --all, or --list")
         print("Use --list to see available SCMs")
+        print("For multiple SCMs: --scm frontdoor four_variable six_variable")
         sys.exit(1)
     
     # Validate SCM names

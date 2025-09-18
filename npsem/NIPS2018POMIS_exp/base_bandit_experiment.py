@@ -142,7 +142,7 @@ class BanditExperiment:
         np.savez_compressed(f"{directory}/mu", a=self.mu)
         np.savez_compressed(f"{directory}/final_regret_T{self.horizon}", **final_regret_data)
         
-    def create_plots(self, directory: str, final_regret_data: Dict[str, np.ndarray], show_plots: bool = True):
+    def create_plots(self, directory: str, final_regret_data: Dict[str, np.ndarray], show_plots: bool = True, y_lim: Optional[float] = None):
         """Create and save experiment plots."""
         print("📊 Creating experiment summary plots...")
         create_experiment_summary_plot(
@@ -152,6 +152,7 @@ class BanditExperiment:
             horizon=self.horizon,
             save_dir=directory,
             show_plots=show_plots,
+            y_lim=y_lim,
         )
         
     def print_summary(self):
@@ -169,7 +170,7 @@ class BanditExperiment:
         print(f"⭐ Optimal arm reward: {np.max(self.mu):.4f}")
         print()
         
-    def run_full_experiment(self, seed: int = 42, save_dir: Optional[str] = None, show_plots: bool = True):
+    def run_full_experiment(self, seed: int = 42, save_dir: Optional[str] = None, show_plots: bool = True, y_lim: Optional[float] = None):
         """Run the complete experiment pipeline."""
         print(f"🚀 Starting {self.scm_name} SCM Bandit Experiments")
         print("=" * 60)
@@ -193,7 +194,7 @@ class BanditExperiment:
         self.save_results(save_dir, final_regret_data)
         
         # Create plots
-        self.create_plots(save_dir, final_regret_data, show_plots)
+        self.create_plots(save_dir, final_regret_data, show_plots, y_lim)
         
         print("✅ Experiment complete!")
         return self.results, self.mu, final_regret_data

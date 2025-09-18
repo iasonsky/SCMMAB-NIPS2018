@@ -8,6 +8,7 @@ __pycache__/
 
 # Allow result images
 !*/*.png
+!npsem/NIPS2018POMIS_exp/*/*.png
 
 # Virtual environments
 .venv/

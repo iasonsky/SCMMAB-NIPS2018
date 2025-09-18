@@ -89,7 +89,7 @@ registry.register_scm(
     four_variable_SCM,
     'Four Variable SCM',
     '4-variable causal diagram from second paper with exact parameter values',
-    {'target_variable': 'Y'}
+    {'target_variable': 'Y', 'y_lim': 200}
 )
 
 registry.register_scm(
@@ -97,7 +97,7 @@ registry.register_scm(
     frontdoor_SCM,
     'Frontdoor SCM', 
     'Frontdoor causal diagram with X->Z->Y and confounding X<->Y',
-    {'target_variable': 'Y'}
+    {'target_variable': 'Y', 'y_lim': 100}
 )
 
 registry.register_scm(
@@ -105,7 +105,7 @@ registry.register_scm(
     six_variable_SCM,
     'Six Variable SCM',
     '6-variable causal diagram with complex confounding relationships',
-    {'target_variable': 'Y'}
+    {'target_variable': 'Y', 'y_lim': 600}
 )
 
 registry.register_scm(

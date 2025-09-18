@@ -71,6 +71,7 @@ def plot_cumulative_regret(
     x_tick_labels: Tuple[str, str, str] = ("0", "5k", "10k"),
     figure_size: Tuple[float, float] = (8, 5),
     show_plot: bool = True,
+    y_max: Optional[float] = None,
 ) -> None:
     """Plot average cumulative regret over time in academic paper style.
 
@@ -138,7 +139,10 @@ def plot_cumulative_regret(
     ax.legend(loc=2, frameon=False)
 
     # Set axis limits and ticks
-    ax.set_ylim(y_lim)
+    if y_max is not None:
+        ax.set_ylim((0, y_max))
+    else:
+        ax.set_ylim(y_lim)
     ax.set_xticks(x_ticks)
     ax.set_xticklabels(x_tick_labels)
 
@@ -238,6 +242,7 @@ def create_experiment_summary_plot(
     horizon: int = 10000,
     save_dir: str = "results",
     show_plots: bool = True,
+    y_lim: Optional[float] = None,
 ) -> None:
     """Create comprehensive experiment summary plots.
 
@@ -261,6 +266,7 @@ def create_experiment_summary_plot(
         horizon=horizon,
         save_path=cumulative_regret_path,
         show_plot=show_plots,
+        y_max=y_lim,
     )
 
     # Create final regret comparison plot
