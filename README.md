@@ -65,6 +65,8 @@ For detailed environment setup instructions, see
 
 ## Reproducing the Experiments
 
+### Original Paper Experiments
+
 Run the following command to execute the bandit experiments (it uses 3/4 of the
 available CPU cores):
 
@@ -79,6 +81,36 @@ results run:
 ```bash
 python3 -m npsem.NIPS2018POMIS_exp.test_drawing_re
 ```
+
+### Modular Bandit Experiments
+
+The repository now includes a modular framework for running bandit experiments on various SCMs:
+
+```bash
+# List available SCMs
+python npsem/NIPS2018POMIS_exp/run_bandit_experiments.py --list
+
+# Run specific SCM
+python npsem/NIPS2018POMIS_exp/run_bandit_experiments.py --scm frontdoor
+
+# Run all SCMs
+python npsem/NIPS2018POMIS_exp/run_bandit_experiments.py --all
+
+# Quick testing mode
+python npsem/NIPS2018POMIS_exp/run_bandit_experiments.py --scm six_variable --quick
+```
+
+### Results
+
+Experiment results and visualizations are available in the [`results/`](results/) directory:
+- **Images**: PNG files showing cumulative regret, final regret comparisons, and causal discovery results
+- **Documentation**: Detailed explanation of each result type and key findings
+
+The modular framework supports:
+- **8 different SCMs**: Including frontdoor, six-variable, and four-variable graphs
+- **3 arm strategies**: POMIS (with latent projection), MIS, and Brute-force
+- **2 bandit algorithms**: Thompson Sampling and UCB
+- **Automatic handling**: Non-manipulable variables via latent projection
 
 ## POMIS Topological Ordering Experiments
 
