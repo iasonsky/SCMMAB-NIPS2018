@@ -189,6 +189,9 @@ class BanditExperiment:
         # Save results
         if save_dir is None:
             save_dir = f"{self.scm_name.lower().replace(' ', '_')}_results"
+        else:
+            # Create SCM-specific subdirectory within the provided save_dir
+            save_dir = f"{save_dir}/{self.scm_name.lower().replace(' ', '_')}_results"
             
         print(f"💾 Saving results to: {save_dir}/")
         self.save_results(save_dir, final_regret_data)

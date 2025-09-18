@@ -45,7 +45,7 @@ def run_single_experiment(scm_name: str, quick: bool = False, show_plots: bool =
             **config
         )
         
-        experiment.run_full_experiment(show_plots=show_plots, y_lim=y_lim)
+        experiment.run_full_experiment(save_dir="experiment_results", show_plots=show_plots, y_lim=y_lim)
         return True
         
     except Exception as e:
