@@ -41,3 +41,4 @@ four_variable_results/
 *.err
 *.out
 *.npz
+r_scripts/plots/
