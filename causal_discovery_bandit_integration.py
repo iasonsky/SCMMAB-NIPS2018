@@ -97,7 +97,7 @@ def run_discovery_bandit_experiment(
 
     # Step 2: Causal Discovery
     print("\n2. Running PC algorithm for causal discovery...")
-    A_cpdag_cl, dags, pomis_union = run_causal_discovery_pipeline(
+    A_cpdag_cl, dags, pomis_union, mis_union = run_causal_discovery_pipeline(
         data,
         var_names,
         ind_test="gsq",
@@ -110,6 +110,7 @@ def run_discovery_bandit_experiment(
     print(f"   {A_cpdag_cl}")
     print(f"   Found {len(dags)} DAGs in the MEC")
     print(f"   POMIS union: {pomis_union}")
+    print(f"   MIS union: {mis_union}")
 
     # Step 3: Run bandit experiments using ground truth SCM
     print("\n5. Running bandit experiments using ground truth SCM...")
@@ -168,6 +169,7 @@ def run_discovery_bandit_experiment(
             "cpdag": A_cpdag_cl,
             "dags": dags,
             "pomis_union": pomis_union,
+            "mis_union": mis_union,
         },
         "bandit": {
             "arm_setting": arm_setting,
@@ -270,6 +272,8 @@ def main():
     print(f"Discovered {len(results['discovery']['dags'])} DAGs in MEC")
     print(f"POMIS union size: {len(results['discovery']['pomis_union'])}")
     print(f"POMIS union: {results['discovery']['pomis_union']}")
+    print(f"MIS union size: {len(results['discovery']['mis_union'])}")
+    print(f"MIS union: {results['discovery']['mis_union']}")
     print(f"Bandit arms: {len(results['bandit']['expected_rewards'])}")
     print(f"Optimal reward: {np.max(results['bandit']['expected_rewards']):.4f}")
 

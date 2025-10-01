@@ -28,6 +28,7 @@ def plot_causal_diagram_pydot(
     highlight_nodes: Optional[List[str]] = None,
     figures_dir: Optional[str] = None,
     consistent_sizing: bool = False,
+    highlight_color: str = "red",
 ) -> str:
     """
     Plot a causal diagram using pydot with optional node highlighting.
@@ -43,9 +44,11 @@ def plot_causal_diagram_pydot(
     title : str, optional
         Title for the plot
     highlight_nodes : List[str], optional
-        Nodes to highlight in red
+        Nodes to highlight
     figures_dir : str, optional
         Directory to save figures in (defaults to ./figures/)
+    highlight_color : str, optional
+        Color to use for highlighting nodes (default: "red")
 
     Returns:
     --------
@@ -72,11 +75,19 @@ def plot_causal_diagram_pydot(
         graph.set_nodesep(0.3)  # Reduce spacing between nodes
 
     # Add nodes
+    # Define color mappings
+    color_map = {
+        "red": ("red", "lightcoral"),
+        "blue": ("blue", "lightblue"),
+        "green": ("green", "lightgreen"),
+        "orange": ("orange", "lightyellow"),
+        "purple": ("purple", "lavender"),
+    }
+    
     for var in var_names:
         # Determine node color
         if highlight_nodes and var in highlight_nodes:
-            color = "red"
-            fillcolor = "lightcoral"
+            color, fillcolor = color_map.get(highlight_color, ("red", "lightcoral"))
         else:
             color = "black"
             fillcolor = "white"
@@ -264,6 +275,37 @@ def get_pomis_for_dag(dag_matrix: np.ndarray, var_names: List[str], Y: str):
         return []
 
 
+def get_mis_for_dag(dag_matrix: np.ndarray, var_names: List[str], Y: str):
+    """
+    Get MIS sets for a specific DAG.
+
+    Parameters:
+    -----------
+    dag_matrix : np.ndarray
+        DAG adjacency matrix
+    var_names : List[str]
+        Variable names
+    Y : str
+        Target variable for MIS analysis
+
+    Returns:
+    --------
+    List[List[str]]
+        List of MIS sets, each containing variable names
+    """
+    try:
+        from npsem.causal_diagram_utils import dagmatrix_to_CausalDiagram
+        from npsem.where_do import MISs
+
+        temp_g = dagmatrix_to_CausalDiagram(dag_matrix, var_names)
+        mis_sets = MISs(temp_g, Y)
+        
+        # Convert frozensets to sorted lists for display
+        return [sorted(list(s)) if s else [] for s in mis_sets]
+    except Exception:
+        return []
+
+
 def create_combined_sanity_check_visualization(
     ground_truth_scm,
     cpdag_matrix: np.ndarray,
@@ -350,14 +392,34 @@ def create_combined_sanity_check_visualization(
             consistent_sizing=True,
         )
         pomis_paths.append(pomis_path)
+    
+    # Create MIS plots
+    mis_paths = []
+    for i, dag in enumerate(dags):
+        temp_g = dagmatrix_to_CausalDiagram(dag, var_names)
+        mis_sets = get_mis_for_dag(dag, var_names, Y)
+        # Highlight all variables that appear in any MIS
+        mis_vars = list(set([var for mis_set in mis_sets for var in mis_set]))
+        mis_label = ", ".join([str(s) if s else "∅" for s in mis_sets])
+        mis_path = plot_causal_diagram_pydot(
+            temp_g,
+            var_names,
+            f"temp_mis_{i + 1}",
+            f"DAG {i + 1} (MIS: {mis_label})",
+            highlight_nodes=mis_vars,
+            figures_dir=figures_dir,
+            consistent_sizing=True,
+            highlight_color="blue",  # Use blue for MIS to distinguish from POMIS
+        )
+        mis_paths.append(mis_path)
 
     # Create combined visualization
     combined_path = os.path.join(figures_dir, "combined_sanity_check.png")
 
     # Calculate grid layout
     n_dags = len(dags)
-    n_cols = max(3, n_dags + 2)  # Ground truth + CPDAG + DAGs + POMIS DAGs
-    n_rows = 3  # Ground truth row, CPDAG row, DAGs+POMIS row
+    n_cols = max(3, n_dags + 2)  # Ground truth + CPDAG + DAGs + POMIS + MIS
+    n_rows = 4  # Ground truth row, CPDAG row, DAGs row, POMIS row, MIS row
 
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(4 * n_cols, 4 * n_rows))
     if n_rows == 1:
@@ -377,6 +439,12 @@ def create_combined_sanity_check_visualization(
     for i, pomis_path in enumerate(pomis_paths):
         pomis_vars = get_pomis_for_dag(dags[i], var_names, Y)
         images.append((pomis_path, f"DAG {i + 1} (POMIS: {pomis_vars})"))
+    
+    # Add MIS images
+    for i, mis_path in enumerate(mis_paths):
+        mis_sets = get_mis_for_dag(dags[i], var_names, Y)
+        mis_label = ", ".join([str(s) if s else "∅" for s in mis_sets])
+        images.append((mis_path, f"DAG {i + 1} (MIS: {mis_label})"))
 
     # Display images in grid
     for idx, (image_path, title) in enumerate(images):
@@ -405,7 +473,7 @@ def create_combined_sanity_check_visualization(
     plt.close()
 
     # Clean up temporary files
-    temp_files = [ground_truth_path, cpdag_path] + dag_paths + pomis_paths
+    temp_files = [ground_truth_path, cpdag_path] + dag_paths + pomis_paths + mis_paths
     for temp_file in temp_files:
         try:
             os.remove(temp_file)

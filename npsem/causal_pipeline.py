@@ -11,7 +11,7 @@ from typing import List, Tuple, Set, Optional
 
 from npsem.causal_discovery import pc_cpdag_adjacency, cl_cpdag_to_pcalg
 from npsem.dag_enumeration import enumerate_dags_from_cpdag
-from npsem.pomis_analysis import pomis_union_over_dags
+from npsem.pomis_analysis import pomis_union_over_dags, mis_union_over_dags
 from npsem.causal_visualization import (
     create_combined_sanity_check_visualization,
 )
@@ -26,9 +26,9 @@ def run_causal_discovery_pipeline(
     sanity_check: bool = False,
     ground_truth_scm: Optional[object] = None,
     save_dir: str = "figures",
-) -> Tuple[np.ndarray, List[np.ndarray], Set[Tuple[str, ...]]]:
+) -> Tuple[np.ndarray, List[np.ndarray], Set[Tuple[str, ...]], Set[Tuple[str, ...]]]:
     """
-    Run complete causal discovery pipeline: CPDAG → DAGs → POMIS union.
+    Run complete causal discovery pipeline: CPDAG → DAGs → POMIS/MIS unions.
 
     Parameters:
     -----------
@@ -41,7 +41,7 @@ def run_causal_discovery_pipeline(
     ind_test : str
         Independence test to use
     Y : str
-        Target variable for POMIS analysis
+        Target variable for POMIS/MIS analysis
     sanity_check : bool
         Whether to show step-by-step visualizations
     ground_truth_scm : StructuralCausalModel, optional
@@ -55,6 +55,8 @@ def run_causal_discovery_pipeline(
         List of DAGs in the MEC
     pomis_union : Set[Tuple[str, ...]]
         Union of POMIS sets across all DAGs
+    mis_union : Set[Tuple[str, ...]]
+        Union of MIS sets across all DAGs
     """
 
     if sanity_check:
@@ -83,10 +85,16 @@ def run_causal_discovery_pipeline(
 
     # Step 4: Compute POMIS union
     pomis_union = pomis_union_over_dags(dags, names_pc, Y)
+    
+    # Step 5: Compute MIS union
+    mis_union = mis_union_over_dags(dags, names_pc, Y)
 
     if sanity_check:
         print("\n3️⃣ POMIS Analysis Complete")
         print(f"   POMIS Union: {pomis_union}")
+        
+        print("\n4️⃣ MIS Analysis Complete")
+        print(f"   MIS Union: {mis_union}")
 
         # Create combined visualization
         if ground_truth_scm is not None:
@@ -103,4 +111,4 @@ def run_causal_discovery_pipeline(
         print("\n✅ SANITY CHECK COMPLETE")
         print("=" * 60)
 
-    return cpdag_pcalg, dags, pomis_union
+    return cpdag_pcalg, dags, pomis_union, mis_union
