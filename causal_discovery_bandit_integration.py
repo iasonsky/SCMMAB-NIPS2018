@@ -23,7 +23,7 @@ from npsem.causal_pipeline import run_causal_discovery_pipeline
 # Import SCM examples and bandit framework
 from npsem.NIPS2018POMIS_exp.scm_examples import chain_SCM
 from npsem.bandits import play_bandits
-from npsem.scm_bandits import SCM_to_bandit_machine, arms_of, arm_types
+from npsem.scm_bandits import SCM_to_bandit_machine, arms_of
 from npsem.utils import subseq
 from npsem.data_simulation import simulate_data_from_scm
 
@@ -144,12 +144,28 @@ def run_discovery_bandit_experiment(
 
     # Strategy configurations: (name, arm_selector_function, description)
     strategy_configs = [
-        ("POMIS", lambda: arms_of("POMIS", arm_setting, ground_truth_scm.G, Y), "ground truth"),
-        ("MIS", lambda: arms_of("MIS", arm_setting, ground_truth_scm.G, Y), "ground truth"),
+        (
+            "POMIS",
+            lambda: arms_of("POMIS", arm_setting, ground_truth_scm.G, Y),
+            "ground truth",
+        ),
+        (
+            "MIS",
+            lambda: arms_of("MIS", arm_setting, ground_truth_scm.G, Y),
+            "ground truth",
+        ),
         ("CD-POMIS", lambda: cd_pomis_arms_of(arm_setting, pomis_union), "discovered"),
         ("CD-MIS", lambda: cd_mis_arms_of(arm_setting, mis_union), "discovered"),
-        ("Brute-force", lambda: arms_of("Brute-force", arm_setting, ground_truth_scm.G, Y), None),
-        ("All-at-once", lambda: arms_of("All-at-once", arm_setting, ground_truth_scm.G, Y), None),
+        (
+            "Brute-force",
+            lambda: arms_of("Brute-force", arm_setting, ground_truth_scm.G, Y),
+            None,
+        ),
+        (
+            "All-at-once",
+            lambda: arms_of("All-at-once", arm_setting, ground_truth_scm.G, Y),
+            None,
+        ),
     ]
 
     for strategy_name, arm_selector, description in strategy_configs:
@@ -159,11 +175,13 @@ def run_discovery_bandit_experiment(
             print(
                 f"   {strategy_name}{desc_str}: Found {len(arm_selected)} arms out of {len(arm_setting)} total"
             )
-            
+
             # Show which intervention sets are being used
             if strategy_name in ["POMIS", "CD-POMIS", "MIS", "CD-MIS"]:
                 intervention_sets = [set(arm_setting[i].keys()) for i in arm_selected]
-                unique_sets = sorted([tuple(sorted(s)) for s in set(map(frozenset, intervention_sets))])
+                unique_sets = sorted(
+                    [tuple(sorted(s)) for s in set(map(frozenset, intervention_sets))]
+                )
                 print(f"      Intervention sets: {unique_sets}")
             if len(arm_selected) == 0:
                 print(f"   Warning: No arms found for strategy {strategy_name}")
@@ -184,6 +202,7 @@ def run_discovery_bandit_experiment(
         except Exception as e:
             print(f"   Error with {strategy_name}: {e}")
             import traceback
+
             traceback.print_exc()
             continue
 

@@ -84,15 +84,19 @@ def run_causal_discovery_pipeline(
         print(f"   Found {len(dags)} DAGs in the Markov Equivalence Class")
 
     # Step 4: Compute POMIS union
-    pomis_union = pomis_union_over_dags(dags, names_pc, Y, enforce_Y_sink=True) # False to include DAGs with Y->*
-    
+    pomis_union = pomis_union_over_dags(
+        dags, names_pc, Y, enforce_Y_sink=True
+    )  # False to include DAGs with Y->*
+
     # Step 5: Compute MIS union
-    mis_union = mis_union_over_dags(dags, names_pc, Y, enforce_Y_sink=True) # False to include DAGs with Y->*
+    mis_union = mis_union_over_dags(
+        dags, names_pc, Y, enforce_Y_sink=True
+    )  # False to include DAGs with Y->*
 
     if sanity_check:
         print("\n3️⃣ POMIS Analysis Complete")
         print(f"   POMIS Union: {pomis_union}")
-        
+
         print("\n4️⃣ MIS Analysis Complete")
         print(f"   MIS Union: {mis_union}")
 

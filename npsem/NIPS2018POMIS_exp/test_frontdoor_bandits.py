@@ -20,7 +20,7 @@ def main():
         num_trials=200,
         horizon=10000,
     )
-    
+
     # Run the complete experiment
     experiment.run_full_experiment(seed=42, save_dir="frontdoor_results")
 

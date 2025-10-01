@@ -11,7 +11,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pydot
 from typing import List, Optional
-from collections import defaultdict
 
 
 def ensure_figures_directory(figures_dir: str = "figures") -> str:
@@ -83,7 +82,7 @@ def plot_causal_diagram_pydot(
         "orange": ("orange", "lightyellow"),
         "purple": ("purple", "lavender"),
     }
-    
+
     for var in var_names:
         # Determine node color
         if highlight_nodes and var in highlight_nodes:
@@ -239,7 +238,7 @@ def get_pomis_for_dag(dag_matrix: np.ndarray, var_names: List[str], Y: str):
 
         temp_g = dagmatrix_to_CausalDiagram(dag_matrix, var_names)
         pomis_sets = POMISs(temp_g, Y)
-        
+
         # Convert frozensets to sorted lists for display
         return [sorted(list(s)) if s else [] for s in pomis_sets]
     except Exception:
@@ -270,7 +269,7 @@ def get_mis_for_dag(dag_matrix: np.ndarray, var_names: List[str], Y: str):
 
         temp_g = dagmatrix_to_CausalDiagram(dag_matrix, var_names)
         mis_sets = MISs(temp_g, Y)
-        
+
         # Convert frozensets to sorted lists for display
         return [sorted(list(s)) if s else [] for s in mis_sets]
     except Exception:
@@ -366,7 +365,7 @@ def create_combined_sanity_check_visualization(
             consistent_sizing=True,
         )
         pomis_paths.append(pomis_path)
-    
+
     # Create MIS plots
     mis_paths = []
     for i, dag in enumerate(dags):
@@ -414,7 +413,7 @@ def create_combined_sanity_check_visualization(
         pomis_vars = get_pomis_for_dag(dags[i], var_names, Y)
         pomis_label = ", ".join([str(s) if s else "∅" for s in pomis_vars])
         images.append((pomis_path, f"DAG {i + 1} (POMIS: {pomis_label})"))
-    
+
     # Add MIS images
     for i, mis_path in enumerate(mis_paths):
         mis_sets = get_mis_for_dag(dags[i], var_names, Y)

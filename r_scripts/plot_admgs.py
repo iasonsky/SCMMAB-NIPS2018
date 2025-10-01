@@ -18,6 +18,7 @@ from dataclasses import dataclass
 @dataclass
 class PlotConfig:
     """Configuration for ADMG plotting."""
+
     default_plots_dir: str = "plots"
     max_cols_per_row: int = 3
     node_font_size: int = 16
@@ -35,9 +36,11 @@ class PlotConfig:
 
 class MatrixParser:
     """Handles parsing of ADMG matrix files."""
-    
+
     @staticmethod
-    def parse_matrix_file(filepath: Path) -> Tuple[Optional[np.ndarray], Optional[List[str]]]:
+    def parse_matrix_file(
+        filepath: Path,
+    ) -> Tuple[Optional[np.ndarray], Optional[List[str]]]:
         """Parse a matrix file and return the adjacency matrix and node names."""
         try:
             with open(filepath, "r") as f:
@@ -67,11 +70,13 @@ class MatrixParser:
 
 class ADMGPlotter:
     """Handles plotting of ADMGs using pydot."""
-    
+
     def __init__(self, config: PlotConfig):
         self.config = config
-    
-    def create_pydot_graph(self, matrix: np.ndarray, node_names: List[str]) -> pydot.Dot:
+
+    def create_pydot_graph(
+        self, matrix: np.ndarray, node_names: List[str]
+    ) -> pydot.Dot:
         """Create a pydot graph from ADMG adjacency matrix with proper 101 handling."""
         graph = pydot.Dot(graph_type="digraph")
 
@@ -89,7 +94,9 @@ class ADMGPlotter:
 
         # Add edges based on matrix values
         n = len(node_names)
-        processed_bidirected = set()  # Track processed bidirected edges to avoid duplicates
+        processed_bidirected = (
+            set()
+        )  # Track processed bidirected edges to avoid duplicates
 
         for i in range(n):
             for j in range(n):
@@ -131,14 +138,20 @@ class ADMGPlotter:
 
         return graph
 
-    def plot_admg(self, matrix: np.ndarray, node_names: List[str], title: str, output_path: str) -> bool:
+    def plot_admg(
+        self, matrix: np.ndarray, node_names: List[str], title: str, output_path: str
+    ) -> bool:
         """Plot an ADMG using pydot for better edge handling."""
         try:
             # Create pydot graph
             graph = self.create_pydot_graph(matrix, node_names)
 
             # Set graph attributes
-            graph.set_graph_defaults(rankdir="TB", size=self.config.graph_size, dpi=str(self.config.image_dpi))
+            graph.set_graph_defaults(
+                rankdir="TB",
+                size=self.config.graph_size,
+                dpi=str(self.config.image_dpi),
+            )
 
             # Generate PNG data
             png_data = graph.create_png()
@@ -150,7 +163,9 @@ class ADMGPlotter:
             self._add_title_to_image(img, title, self.config.title_font_size)
 
             # Save the image
-            img.save(output_path, "PNG", dpi=(self.config.image_dpi, self.config.image_dpi))
+            img.save(
+                output_path, "PNG", dpi=(self.config.image_dpi, self.config.image_dpi)
+            )
 
             print(f"Saved (pydot): {output_path}")
             return True
@@ -186,22 +201,22 @@ class ADMGPlotter:
 
 class ADMGFileHandler:
     """Handles file operations for ADMG plotting."""
-    
+
     def __init__(self, config: PlotConfig):
         self.config = config
         self.parser = MatrixParser()
-    
+
     def find_matrix_files(self, plots_dir: str) -> Tuple[List[Path], List[Path]]:
         """Find and categorize matrix files."""
         plots_path = Path(plots_dir)
-        
+
         if not plots_path.exists():
             print(f"Directory {plots_dir} does not exist!")
             return [], []
 
         # Find all matrix files
         matrix_files = list(plots_path.glob("*_matrix.txt"))
-        
+
         if not matrix_files:
             print("No matrix files found!")
             return [], []
@@ -214,9 +229,9 @@ class ADMGFileHandler:
 
         print(f"Filtered ADMGs: {len(filtered_files)}")
         print(f"Unfiltered ADMGs: {len(unfiltered_files)}")
-        
+
         return filtered_files, unfiltered_files
-    
+
     def create_output_directory(self, plots_dir: str) -> Path:
         """Create output directory for Python plots."""
         plots_path = Path(plots_dir)
@@ -227,19 +242,21 @@ class ADMGFileHandler:
 
 class ADMGProcessor:
     """Main processor for ADMG plotting operations."""
-    
+
     def __init__(self, config: PlotConfig = None):
         self.config = config or PlotConfig()
         self.plotter = ADMGPlotter(self.config)
         self.file_handler = ADMGFileHandler(self.config)
-    
+
     def plot_all_admgs(self, plots_dir: str = None) -> None:
         """Plot all ADMG matrix files."""
         plots_dir = plots_dir or self.config.default_plots_dir
-        
+
         # Find and categorize files
-        filtered_files, unfiltered_files = self.file_handler.find_matrix_files(plots_dir)
-        
+        filtered_files, unfiltered_files = self.file_handler.find_matrix_files(
+            plots_dir
+        )
+
         if not filtered_files and not unfiltered_files:
             return
 
@@ -257,7 +274,9 @@ class ADMGProcessor:
         self.create_combined_pag_plot("pag1", filtered_files, python_plots_dir)
         self.create_combined_pag_plot("pag2", filtered_files, python_plots_dir)
 
-    def _plot_individual_admgs(self, matrix_files: List[Path], output_dir: Path) -> None:
+    def _plot_individual_admgs(
+        self, matrix_files: List[Path], output_dir: Path
+    ) -> None:
         """Plot individual ADMG files."""
         for matrix_file in sorted(matrix_files):
             print(f"Processing {matrix_file.name}...")
@@ -279,7 +298,9 @@ class ADMGProcessor:
             # Plot the ADMG
             self.plotter.plot_admg(matrix, node_names, title, str(output_path))
 
-    def create_combined_pag_plot(self, pag_name: str, matrix_files: List[Path], output_dir: Path) -> None:
+    def create_combined_pag_plot(
+        self, pag_name: str, matrix_files: List[Path], output_dir: Path
+    ) -> None:
         """Create a combined plot showing all ADMGs for a specific PAG."""
         if not matrix_files:
             return
@@ -291,7 +312,7 @@ class ADMGProcessor:
 
         # Create combined graph
         combined_graph = self._create_combined_graph(pag_files)
-        
+
         if combined_graph:
             self._save_combined_plot(combined_graph, pag_name, output_dir)
 
@@ -300,9 +321,9 @@ class ADMGProcessor:
         # Create a large combined graph
         combined_graph = pydot.Dot(graph_type="digraph")
         combined_graph.set_graph_defaults(
-            rankdir="TB", 
-            size=self.config.combined_graph_size, 
-            dpi=str(self.config.image_dpi)
+            rankdir="TB",
+            size=self.config.combined_graph_size,
+            dpi=str(self.config.image_dpi),
         )
 
         # Add subgraph for each ADMG
@@ -320,7 +341,9 @@ class ADMGProcessor:
 
         return combined_graph
 
-    def _create_admg_subgraph(self, matrix: np.ndarray, node_names: List[str], admg_number: str) -> pydot.Subgraph:
+    def _create_admg_subgraph(
+        self, matrix: np.ndarray, node_names: List[str], admg_number: str
+    ) -> pydot.Subgraph:
         """Create a subgraph for a single ADMG."""
         subgraph_name = f"cluster_{admg_number}"
         subgraph = pydot.Subgraph(graph_name=subgraph_name)
@@ -341,14 +364,20 @@ class ADMGProcessor:
 
         # Add edges to subgraph
         self._add_subgraph_edges(matrix, node_names, admg_number, subgraph)
-        
+
         return subgraph
 
-    def _add_subgraph_edges(self, matrix: np.ndarray, node_names: List[str], admg_number: str, subgraph: pydot.Subgraph) -> None:
+    def _add_subgraph_edges(
+        self,
+        matrix: np.ndarray,
+        node_names: List[str],
+        admg_number: str,
+        subgraph: pydot.Subgraph,
+    ) -> None:
         """Add edges to the subgraph."""
         processed_bidirected = set()
         n = len(node_names)
-        
+
         for row in range(n):
             for col in range(n):
                 if matrix[row, col] == 1:  # Directed edge
@@ -361,7 +390,14 @@ class ADMGProcessor:
                     )
                     subgraph.add_edge(edge)
                 elif matrix[row, col] == 100:  # Bidirected edge
-                    edge_key = tuple(sorted([f"{admg_number}_{node_names[row]}", f"{admg_number}_{node_names[col]}"]))
+                    edge_key = tuple(
+                        sorted(
+                            [
+                                f"{admg_number}_{node_names[row]}",
+                                f"{admg_number}_{node_names[col]}",
+                            ]
+                        )
+                    )
                     if edge_key not in processed_bidirected:
                         edge = pydot.Edge(
                             f"{admg_number}_{node_names[row]}",
@@ -384,20 +420,26 @@ class ADMGProcessor:
                     )
                     subgraph.add_edge(edge)
 
-    def _save_combined_plot(self, combined_graph: pydot.Dot, pag_name: str, output_dir: Path) -> None:
+    def _save_combined_plot(
+        self, combined_graph: pydot.Dot, pag_name: str, output_dir: Path
+    ) -> None:
         """Save the combined plot to file."""
         try:
             png_data = combined_graph.create_png()
             img = Image.open(io.BytesIO(png_data))
-            
+
             title = f"All ADMGs for {pag_name.upper()}"
-            self.plotter._add_title_to_image(img, title, self.config.title_font_size_combined)
-            
+            self.plotter._add_title_to_image(
+                img, title, self.config.title_font_size_combined
+            )
+
             output_path = output_dir / f"{pag_name}_all_admgs.png"
-            img.save(output_path, "PNG", dpi=(self.config.image_dpi, self.config.image_dpi))
-            
+            img.save(
+                output_path, "PNG", dpi=(self.config.image_dpi, self.config.image_dpi)
+            )
+
             print(f"Combined plot saved: {output_path}")
-            
+
         except Exception as e:
             print(f"Combined plot failed for {pag_name}: {e}")
 
@@ -406,27 +448,19 @@ def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description="Plot ADMGs from matrix files")
     parser.add_argument(
-        "--plots-dir", 
-        default="plots", 
-        help="Directory containing matrix files (default: plots)"
+        "--plots-dir",
+        default="plots",
+        help="Directory containing matrix files (default: plots)",
     )
     parser.add_argument(
-        "--max-cols", 
-        type=int, 
-        default=3, 
-        help="Maximum columns per row in combined plots (default: 3)"
+        "--max-cols",
+        type=int,
+        default=3,
+        help="Maximum columns per row in combined plots (default: 3)",
     )
+    parser.add_argument("--dpi", type=int, default=300, help="Image DPI (default: 300)")
     parser.add_argument(
-        "--dpi", 
-        type=int, 
-        default=300, 
-        help="Image DPI (default: 300)"
-    )
-    parser.add_argument(
-        "--font-size", 
-        type=int, 
-        default=16, 
-        help="Node font size (default: 16)"
+        "--font-size", type=int, default=16, help="Node font size (default: 16)"
     )
     return parser.parse_args()
 
@@ -434,7 +468,7 @@ def parse_arguments():
 def main():
     """Main function with CLI support."""
     args = parse_arguments()
-    
+
     # Create configuration
     config = PlotConfig(
         default_plots_dir=args.plots_dir,
@@ -442,7 +476,7 @@ def main():
         image_dpi=args.dpi,
         node_font_size=args.font_size,
     )
-    
+
     # Create processor and run
     processor = ADMGProcessor(config)
     processor.plot_all_admgs()

@@ -313,12 +313,18 @@ def plot_cumulative_regret_from_analysis(
     c__ = sns.color_palette("Set1", 9)  # Expanded palette
     # Pair colors: same color for TS/UCB of each strategy
     COLORS = [
-        c__[0], c__[0],  # POMIS TS/UCB
-        c__[1], c__[1],  # MIS TS/UCB
-        c__[3], c__[3],  # CD-POMIS TS/UCB
-        c__[4], c__[4],  # CD-MIS TS/UCB
-        c__[2], c__[2],  # Brute-force TS/UCB
-        c__[5], c__[5],  # All-at-once TS/UCB
+        c__[0],
+        c__[0],  # POMIS TS/UCB
+        c__[1],
+        c__[1],  # MIS TS/UCB
+        c__[3],
+        c__[3],  # CD-POMIS TS/UCB
+        c__[4],
+        c__[4],  # CD-MIS TS/UCB
+        c__[2],
+        c__[2],  # Brute-force TS/UCB
+        c__[5],
+        c__[5],  # All-at-once TS/UCB
     ]
 
     # Map strategies to colors
@@ -425,12 +431,18 @@ def plot_final_regret_comparison_from_analysis(
     c__ = sns.color_palette("Set1", 9)  # Expanded palette
     # Pair colors: same color for TS/UCB of each strategy
     COLORS = [
-        c__[0], c__[0],  # POMIS TS/UCB
-        c__[1], c__[1],  # MIS TS/UCB
-        c__[3], c__[3],  # CD-POMIS TS/UCB
-        c__[4], c__[4],  # CD-MIS TS/UCB
-        c__[2], c__[2],  # Brute-force TS/UCB
-        c__[5], c__[5],  # All-at-once TS/UCB
+        c__[0],
+        c__[0],  # POMIS TS/UCB
+        c__[1],
+        c__[1],  # MIS TS/UCB
+        c__[3],
+        c__[3],  # CD-POMIS TS/UCB
+        c__[4],
+        c__[4],  # CD-MIS TS/UCB
+        c__[2],
+        c__[2],  # Brute-force TS/UCB
+        c__[5],
+        c__[5],  # All-at-once TS/UCB
     ]
 
     # Map strategies to colors
