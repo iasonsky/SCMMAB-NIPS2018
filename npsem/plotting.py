@@ -307,15 +307,29 @@ def plot_cumulative_regret_from_analysis(
     """
     setup_paper_style()
 
-    # Use the same color palette as the paper
-    c__ = sns.color_palette("Set1", 4)
-    COLORS = [c__[0], c__[0], c__[1], c__[1], c__[2], c__[2], c__[3], c__[3]]
+    # Use an expanded color palette to support more strategies
+    # We need to support: POMIS, MIS, CD-POMIS, CD-MIS, Brute-force, All-at-once
+    # Each with TS and UCB = 12 combinations
+    c__ = sns.color_palette("Set1", 9)  # Expanded palette
+    # Pair colors: same color for TS/UCB of each strategy
+    COLORS = [
+        c__[0], c__[0],  # POMIS TS/UCB
+        c__[1], c__[1],  # MIS TS/UCB
+        c__[3], c__[3],  # CD-POMIS TS/UCB
+        c__[4], c__[4],  # CD-MIS TS/UCB
+        c__[2], c__[2],  # Brute-force TS/UCB
+        c__[5], c__[5],  # All-at-once TS/UCB
+    ]
 
-    # Map strategies to colors (matching paper's approach)
+    # Map strategies to colors
     strategy_algo_pairs = [(strategy, algo) for (strategy, algo) in analysis.keys()]
     strategy_colors = {}
     for i, (arm_strategy, bandit_algo) in enumerate(strategy_algo_pairs):
-        strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i]
+        if i < len(COLORS):
+            strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i]
+        else:
+            # Fallback to cycling through colors if we have more strategies
+            strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i % len(COLORS)]
 
     # Create the plot
     fig, ax = plt.subplots(1, 1, figsize=(8, 5))
@@ -405,15 +419,29 @@ def plot_final_regret_comparison_from_analysis(
     """
     setup_paper_style()
 
-    # Use the same color palette as the paper
-    c__ = sns.color_palette("Set1", 4)
-    COLORS = [c__[0], c__[0], c__[1], c__[1], c__[2], c__[2], c__[3], c__[3]]
+    # Use an expanded color palette to support more strategies
+    # We need to support: POMIS, MIS, CD-POMIS, CD-MIS, Brute-force, All-at-once
+    # Each with TS and UCB = 12 combinations
+    c__ = sns.color_palette("Set1", 9)  # Expanded palette
+    # Pair colors: same color for TS/UCB of each strategy
+    COLORS = [
+        c__[0], c__[0],  # POMIS TS/UCB
+        c__[1], c__[1],  # MIS TS/UCB
+        c__[3], c__[3],  # CD-POMIS TS/UCB
+        c__[4], c__[4],  # CD-MIS TS/UCB
+        c__[2], c__[2],  # Brute-force TS/UCB
+        c__[5], c__[5],  # All-at-once TS/UCB
+    ]
 
-    # Map strategies to colors (matching paper's approach)
+    # Map strategies to colors
     strategy_algo_pairs = [(strategy, algo) for (strategy, algo) in analysis.keys()]
     strategy_colors = {}
     for i, (arm_strategy, bandit_algo) in enumerate(strategy_algo_pairs):
-        strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i]
+        if i < len(COLORS):
+            strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i]
+        else:
+            # Fallback to cycling through colors if we have more strategies
+            strategy_colors[(arm_strategy, bandit_algo)] = COLORS[i % len(COLORS)]
 
     # Extract data for plotting
     strategies = []

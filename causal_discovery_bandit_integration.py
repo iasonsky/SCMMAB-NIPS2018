@@ -118,36 +118,73 @@ def run_discovery_bandit_experiment(
     print(f"   Created {len(mu)} bandit arms")
     print(f"   Expected rewards: {mu}")
 
-    # Define arm strategies to compare (using all available types)
-    arm_strategies = arm_types()  # ["POMIS", "MIS", "Brute-force", "All-at-once"]
+    # Define strategies to compare
+    # We'll test both ground truth and discovered POMIS/MIS
     bandit_algorithms = ["TS", "UCB"]
-
     results = {}
 
-    for arm_strategy in arm_strategies:
+    # Helper function to get arms from discovered sets
+    def cd_pomis_arms_of(arm_setting, pomis_union):
+        """Get arms matching discovered POMIS union."""
+        arms = []
+        for arm_id, intervention in arm_setting.items():
+            intervened_vars = tuple(sorted(intervention.keys()))
+            if intervened_vars in pomis_union:
+                arms.append(arm_id)
+        return tuple(arms)
+
+    def cd_mis_arms_of(arm_setting, mis_union):
+        """Get arms matching discovered MIS union."""
+        arms = []
+        for arm_id, intervention in arm_setting.items():
+            intervened_vars = tuple(sorted(intervention.keys()))
+            if intervened_vars in mis_union:
+                arms.append(arm_id)
+        return tuple(arms)
+
+    # Strategy configurations: (name, arm_selector_function, description)
+    strategy_configs = [
+        ("POMIS", lambda: arms_of("POMIS", arm_setting, ground_truth_scm.G, Y), "ground truth"),
+        ("MIS", lambda: arms_of("MIS", arm_setting, ground_truth_scm.G, Y), "ground truth"),
+        ("CD-POMIS", lambda: cd_pomis_arms_of(arm_setting, pomis_union), "discovered"),
+        ("CD-MIS", lambda: cd_mis_arms_of(arm_setting, mis_union), "discovered"),
+        ("Brute-force", lambda: arms_of("Brute-force", arm_setting, ground_truth_scm.G, Y), None),
+        ("All-at-once", lambda: arms_of("All-at-once", arm_setting, ground_truth_scm.G, Y), None),
+    ]
+
+    for strategy_name, arm_selector, description in strategy_configs:
         try:
-            arm_selected = arms_of(arm_strategy, arm_setting, ground_truth_scm.G, Y)
+            arm_selected = arm_selector()
+            desc_str = f" ({description})" if description else ""
             print(
-                f"   {arm_strategy}: Found {len(arm_selected)} arms out of {len(arm_setting)} total"
+                f"   {strategy_name}{desc_str}: Found {len(arm_selected)} arms out of {len(arm_setting)} total"
             )
+            
+            # Show which intervention sets are being used
+            if strategy_name in ["POMIS", "CD-POMIS", "MIS", "CD-MIS"]:
+                intervention_sets = [set(arm_setting[i].keys()) for i in arm_selected]
+                unique_sets = sorted([tuple(sorted(s)) for s in set(map(frozenset, intervention_sets))])
+                print(f"      Intervention sets: {unique_sets}")
             if len(arm_selected) == 0:
-                print(f"   Warning: No arms found for strategy {arm_strategy}")
+                print(f"   Warning: No arms found for strategy {strategy_name}")
                 continue
 
             arm_corrector = np.vectorize(lambda x: arm_selected[x])
 
             for bandit_algo in bandit_algorithms:
-                print(f"   Running {arm_strategy} + {bandit_algo}...")
+                print(f"   Running {strategy_name} + {bandit_algo}...")
                 arm_played, rewards = play_bandits(
                     horizon, subseq(mu, arm_selected), bandit_algo, num_trials, n_jobs
                 )
-                results[(arm_strategy, bandit_algo)] = (
+                results[(strategy_name, bandit_algo)] = (
                     arm_corrector(arm_played),
                     rewards,
                 )
 
         except Exception as e:
-            print(f"   Error with {arm_strategy}: {e}")
+            print(f"   Error with {strategy_name}: {e}")
+            import traceback
+            traceback.print_exc()
             continue
 
     # Step 6: Analysis and visualization
@@ -254,6 +291,8 @@ def main():
     print(f"   Parameters: {p_u_params}")
 
     # Run the integrated experiment
+    # Standard NIPS 2018 settings: num_trials=200, horizon=10000
+    # For quick testing, use: num_trials=50, horizon=2000
     results = run_discovery_bandit_experiment(
         ground_truth_scm=ground_truth_scm,
         Y="Y",

@@ -217,10 +217,7 @@ def plot_cpdag_pydot(
 
 def get_pomis_for_dag(dag_matrix: np.ndarray, var_names: List[str], Y: str):
     """
-    Get POMIS set for a specific DAG.
-
-    This function creates a temporary SCM for the given DAG and computes
-    its POMIS set for visualization purposes.
+    Get POMIS sets for a specific DAG.
 
     Parameters:
     -----------
@@ -233,44 +230,18 @@ def get_pomis_for_dag(dag_matrix: np.ndarray, var_names: List[str], Y: str):
 
     Returns:
     --------
-    List[str]
-        List of variable names in the POMIS set
+    List[List[str]]
+        List of POMIS sets, each containing variable names
     """
     try:
         from npsem.causal_diagram_utils import dagmatrix_to_CausalDiagram
-        from npsem.scm_bandits import SCM_to_bandit_machine, arms_of
-        from npsem.model import StructuralCausalModel, default_P_U
+        from npsem.where_do import POMISs
 
-        # Create temporary SCM for this DAG
         temp_g = dagmatrix_to_CausalDiagram(dag_matrix, var_names)
-        temp_scm = StructuralCausalModel(
-            temp_g,
-            F={
-                "Z": lambda v: v.get("U_Z", 0),
-                "X": lambda v: v.get("U_X", 0),
-                "Y": lambda v: v.get("U_Y", 0),
-            },
-            P_U=default_P_U({"U_Z": 0.5, "U_X": 0.5, "U_Y": 0.5}),
-            D=defaultdict(lambda: (0, 1)),
-            more_U={"U_Z", "U_X", "U_Y"},
-        )
-
-        # Get POMIS set
-        _, arm_setting = SCM_to_bandit_machine(temp_scm, Y)
-        pomis_arms = arms_of("POMIS", arm_setting, temp_g, Y)
-
-        # Convert arm indices to variable names
-        pomis_vars = []
-        for arm_idx in pomis_arms:
-            if arm_idx in arm_setting:
-                arm_info = arm_setting[arm_idx]
-                # Extract variable name from intervention
-                for var in var_names:
-                    if var in str(arm_info):
-                        if var not in pomis_vars:
-                            pomis_vars.append(var)
-
-        return pomis_vars
+        pomis_sets = POMISs(temp_g, Y)
+        
+        # Convert frozensets to sorted lists for display
+        return [sorted(list(s)) if s else [] for s in pomis_sets]
     except Exception:
         return []
 
@@ -381,12 +352,15 @@ def create_combined_sanity_check_visualization(
     pomis_paths = []
     for i, dag in enumerate(dags):
         temp_g = dagmatrix_to_CausalDiagram(dag, var_names)
-        pomis_vars = get_pomis_for_dag(dag, var_names, Y)
+        pomis_sets = get_pomis_for_dag(dag, var_names, Y)
+        # Highlight all variables that appear in any POMIS
+        pomis_vars = list(set([var for pomis_set in pomis_sets for var in pomis_set]))
+        pomis_label = ", ".join([str(s) if s else "∅" for s in pomis_sets])
         pomis_path = plot_causal_diagram_pydot(
             temp_g,
             var_names,
             f"temp_pomis_{i + 1}",
-            f"DAG {i + 1} (POMIS: {pomis_vars})",
+            f"DAG {i + 1} (POMIS: {pomis_label})",
             highlight_nodes=pomis_vars,
             figures_dir=figures_dir,
             consistent_sizing=True,
@@ -438,7 +412,8 @@ def create_combined_sanity_check_visualization(
     # Add POMIS images
     for i, pomis_path in enumerate(pomis_paths):
         pomis_vars = get_pomis_for_dag(dags[i], var_names, Y)
-        images.append((pomis_path, f"DAG {i + 1} (POMIS: {pomis_vars})"))
+        pomis_label = ", ".join([str(s) if s else "∅" for s in pomis_vars])
+        images.append((pomis_path, f"DAG {i + 1} (POMIS: {pomis_label})"))
     
     # Add MIS images
     for i, mis_path in enumerate(mis_paths):
