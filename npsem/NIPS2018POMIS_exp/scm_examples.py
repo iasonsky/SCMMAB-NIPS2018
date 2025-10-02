@@ -59,6 +59,60 @@ def IV_SCM(devised=True, seed=None):
         return M, mu1
 
 
+def IV_SCM_strong(devised=True, seed=None):
+    """
+    Strong IV SCM adapted from IV_SCM for better FCI detection.
+
+    Uses OR operations instead of XOR and smaller noise parameters to create
+    stronger correlations that FCI algorithm can detect.
+
+    Structure: Z -> X -> Y with confounding X <-> Y (U_XY)
+
+    Returns
+    -------
+    M : StructuralCausalModel
+    mu1 : dict   # P(U=1) for each exogenous variable
+    """
+    with seeded(seed):
+        G = IV_CD()
+
+        # Original noise parameters from IV_SCM
+        if devised:
+            mu1 = {
+                "U_X": rand_bw(0.01, 0.2, precision=2),
+                "U_Y": rand_bw(0.01, 0.2, precision=2),
+                "U_Z": rand_bw(0.01, 0.99, precision=2),
+                "U_XY": rand_bw(0.4, 0.6, precision=2),
+            }
+        else:
+            mu1 = {
+                "U_X": rand_bw(0.01, 0.99, precision=2),
+                "U_Y": rand_bw(0.01, 0.99, precision=2),
+                "U_Z": rand_bw(0.01, 0.99, precision=2),
+                "U_XY": rand_bw(0.01, 0.99, precision=2),
+            }
+
+        P_U = default_P_U(mu1)
+
+        domains = defaultdict(lambda: (0, 1))
+
+        # SCM with OR operations for stronger correlations
+        M = StructuralCausalModel(
+            G,
+            F={
+                "Z": lambda v: v["U_Z"],
+                "X": lambda v: v["Z"]
+                | v["U_X"],  # X = Z ∨ U_X (OR for stronger correlation)
+                "Y": lambda v: v["X"]
+                | v["U_Y"],  # Y = X ∨ U_Y (OR for stronger correlation)
+            },
+            P_U=P_U,
+            D=domains,
+            more_U={"U_X", "U_Y", "U_Z"},
+        )
+        return M, mu1
+
+
 def XYZWST(u_wx="U0", u_yz="U1", manipulable_vars=None):
     W, X, Y, Z, S, T = "W", "X", "Y", "Z", "S", "T"
     return CausalDiagram(

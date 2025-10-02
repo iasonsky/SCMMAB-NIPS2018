@@ -13,6 +13,7 @@ from npsem.NIPS2018POMIS_exp.scm_examples import (
     six_variable_SCM,
     chain_SCM,
     IV_SCM,
+    IV_SCM_strong,
     XYZW_SCM,
     XYZWST_SCM,
     simple_markovian_SCM,
@@ -123,6 +124,14 @@ registry.register_scm(
     IV_SCM,
     "Instrumental Variable SCM",
     "Instrumental variable setup with Z->X->Y and confounding X<->Y",
+    {"target_variable": "Y"},
+)
+
+registry.register_scm(
+    "iv_strong",
+    IV_SCM_strong,
+    "IV Strong SCM",
+    "IV setup with OR operations for better FCI detection (Z->X->Y with X<->Y confounding)",
     {"target_variable": "Y"},
 )
 
