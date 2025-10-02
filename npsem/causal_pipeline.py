@@ -9,13 +9,66 @@ pipelines, integrating all the individual components.
 import numpy as np
 from typing import List, Tuple, Set, Optional
 
-from npsem.causal_discovery import pc_cpdag_adjacency, cl_cpdag_to_pcalg
+from npsem.causal_discovery import (
+    pc_cpdag_adjacency,
+    cl_cpdag_to_pcalg,
+    fci_pag_adjacency,
+)
 from npsem.dag_enumeration import enumerate_dags_from_cpdag
 from npsem.pomis_analysis import pomis_union_over_dags, mis_union_over_dags
 from npsem.causal_visualization import (
     create_combined_sanity_check_visualization,
 )
+from npsem.causal_diagram_utils import pag_to_admg
 
+
+def run_causal_discovery_pipeline_UC(
+    data: np.ndarray,
+    var_names: List[str],
+    alpha: float = 0.05,
+    ind_test: str = "gsq",
+    Y: str = "Y",
+    sanity_check: bool = False,
+    ground_truth_scm: Optional[object] = None,
+    save_dir: str = "figures",
+) -> Tuple[np.ndarray, List[np.ndarray], Set[Tuple[str, ...]], Set[Tuple[str, ...]]]:
+    """
+    Run complete causal discovery pipeline: PAG → ADMGs → POMIS/MIS unions.
+    """
+
+    if sanity_check:
+        print("\n🔍 SANITY CHECK MODE: Step-by-step verification")
+        print("=" * 60)
+
+    # Step 1: Discover PAG
+    pag_cl, var_names, edges = fci_pag_adjacency(
+        data, var_names, alpha, ind_test, save_plot=True
+    )
+    
+    if sanity_check:
+        print("\n1️⃣ PAG Discovery Complete")
+        print(f"   Found PAG with {np.sum(pag_cl != 0)} edges")
+        print(f"   PAG matrix:\n{pag_cl}")
+
+    # Step 2: Convert PAG to ADMGs
+    admgs = pag_to_admg(pag_cl, var_names, edges)
+    if sanity_check:
+        print("\n2️⃣ ADMG Enumeration Complete")
+        print(f"   Found {len(admgs)} ADMGs consistent with PAG")
+
+    # Step 3: Compute POMIS union over ADMGs
+    # For now, we'll use a placeholder since we need to implement ADMG POMIS analysis
+    pomis_union = set()  # TODO: Implement pomis_union_over_admgs
+    mis_union = set()    # TODO: Implement mis_union_over_admgs
+
+    if sanity_check:
+        print("\n3️⃣ POMIS Analysis Complete")
+        print(f"   POMIS Union: {pomis_union}")
+        print(f"   MIS Union: {mis_union}")
+        print("\n✅ SANITY CHECK COMPLETE")
+        print("=" * 60)
+
+    return pag_cl, admgs, pomis_union, mis_union
 
 def run_causal_discovery_pipeline(
     data: np.ndarray,

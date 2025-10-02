@@ -10,6 +10,27 @@ import numpy as np
 from typing import List, Tuple
 from causallearn.utils.GraphUtils import GraphUtils
 from causallearn.search.ConstraintBased.PC import pc
+from causallearn.search.ConstraintBased.FCI import fci
+
+
+def fci_pag_adjacency(
+    data: np.ndarray,
+    names: List[str],
+    alpha: float = 0.05,
+    ind_test: str = "gsq",
+    save_plot: bool = True,
+) -> Tuple[np.ndarray, List[str], List[Tuple[str, str]]]:
+    """
+    Run FCI algorithm to discover PAG from data.
+    """
+    g, edges = fci(data, alpha=alpha, ind_test=ind_test)
+    A = np.array(g.graph)
+    if save_plot:
+        pyd = GraphUtils.to_pydot(g, labels=list(names))
+        pyd.write_png("pag.png")
+        print("PAG visualization saved as 'pag.png'")
+
+    return A.astype(float), list(names), edges
 
 
 def pc_cpdag_adjacency(

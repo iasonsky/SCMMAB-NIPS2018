@@ -42,3 +42,4 @@ four_variable_results/
 *.out
 *.npz
 r_scripts/plots/
+pag_admg_results/

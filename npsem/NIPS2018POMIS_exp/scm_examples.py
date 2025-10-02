@@ -101,10 +101,8 @@ def IV_SCM_strong(devised=True, seed=None):
             G,
             F={
                 "Z": lambda v: v["U_Z"],
-                "X": lambda v: v["Z"]
-                | v["U_X"],  # X = Z ∨ U_X (OR for stronger correlation)
-                "Y": lambda v: v["X"]
-                | v["U_Y"],  # Y = X ∨ U_Y (OR for stronger correlation)
+                "X": lambda v: v["U_X"] | v["U_XY"] | v["Z"],
+                "Y": lambda v: 1 | v["U_Y"] | v["U_XY"] | v["X"],
             },
             P_U=P_U,
             D=domains,
