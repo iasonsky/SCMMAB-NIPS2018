@@ -100,7 +100,7 @@ def run_discovery_bandit_experiment(
     A_cpdag_cl, dags, pomis_union, mis_union = run_causal_discovery_pipeline(
         data,
         var_names,
-        ind_test="gsq",
+        ind_test="chisq",
         alpha=alpha,
         sanity_check=True,
         ground_truth_scm=ground_truth_scm,

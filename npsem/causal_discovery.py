@@ -17,13 +17,13 @@ def fci_pag_adjacency(
     data: np.ndarray,
     names: List[str],
     alpha: float = 0.05,
-    ind_test: str = "gsq",
+    ind_test: str = "fisherz",
     save_plot: bool = True,
 ) -> Tuple[np.ndarray, List[str], List[Tuple[str, str]]]:
     """
     Run FCI algorithm to discover PAG from data.
     """
-    g, edges = fci(data, alpha=alpha, ind_test=ind_test)
+    g, edges = fci(data, independence_test_method=ind_test, alpha=alpha)
     A = np.array(g.graph)
     if save_plot:
         pyd = GraphUtils.to_pydot(g, labels=list(names))
@@ -37,7 +37,7 @@ def pc_cpdag_adjacency(
     data: np.ndarray,
     names: List[str],
     alpha: float = 0.05,
-    ind_test: str = "fisherz",
+    ind_test: str = "chisq",
     save_plot: bool = True,
 ) -> Tuple[np.ndarray, List[str]]:
     """
@@ -63,7 +63,7 @@ def pc_cpdag_adjacency(
     names : List[str]
         Variable names (same as input)
     """
-    cg = pc(data, alpha=alpha, ind_test=ind_test)
+    cg = pc(data, alpha=alpha, indep_test=ind_test)
     A = np.array(cg.G.graph)
 
     if save_plot:

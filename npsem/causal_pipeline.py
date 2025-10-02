@@ -26,7 +26,7 @@ def run_causal_discovery_pipeline_UC(
     data: np.ndarray,
     var_names: List[str],
     alpha: float = 0.05,
-    ind_test: str = "gsq",
+    ind_test: str = "fisherz",
     Y: str = "Y",
     sanity_check: bool = False,
     ground_truth_scm: Optional[object] = None,
@@ -44,7 +44,7 @@ def run_causal_discovery_pipeline_UC(
     pag_cl, var_names, edges = fci_pag_adjacency(
         data, var_names, alpha, ind_test, save_plot=True
     )
-    
+
     if sanity_check:
         print("\n1️⃣ PAG Discovery Complete")
         print(f"   Found PAG with {np.sum(pag_cl != 0)} edges")
@@ -59,7 +59,7 @@ def run_causal_discovery_pipeline_UC(
     # Step 3: Compute POMIS union over ADMGs
     # For now, we'll use a placeholder since we need to implement ADMG POMIS analysis
     pomis_union = set()  # TODO: Implement pomis_union_over_admgs
-    mis_union = set()    # TODO: Implement mis_union_over_admgs
+    mis_union = set()  # TODO: Implement mis_union_over_admgs
 
     if sanity_check:
         print("\n3️⃣ POMIS Analysis Complete")
@@ -70,11 +70,12 @@ def run_causal_discovery_pipeline_UC(
 
     return pag_cl, admgs, pomis_union, mis_union
 
+
 def run_causal_discovery_pipeline(
     data: np.ndarray,
     var_names: List[str],
     alpha: float = 0.05,
-    ind_test: str = "gsq",
+    ind_test: str = "chisq",
     Y: str = "Y",
     sanity_check: bool = False,
     ground_truth_scm: Optional[object] = None,
