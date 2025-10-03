@@ -102,7 +102,7 @@ def IV_SCM_strong(devised=True, seed=None):
             F={
                 "Z": lambda v: v["U_Z"],
                 "X": lambda v: v["U_X"] | v["U_XY"] | v["Z"],
-                "Y": lambda v: 1 | v["U_Y"] | v["U_XY"] | v["X"],
+                "Y": lambda v: v["U_Y"] | v["U_XY"] | v["X"],
             },
             P_U=P_U,
             D=domains,
