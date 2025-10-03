@@ -21,7 +21,7 @@ from typing import Dict
 from npsem.causal_pipeline import run_causal_discovery_pipeline_UC
 
 # Import SCM examples and bandit framework
-from npsem.NIPS2018POMIS_exp.scm_examples import IV_SCM_strong
+from npsem.NIPS2018POMIS_exp.scm_examples import IV_SCM_strong, IV_SCM
 from npsem.bandits import play_bandits
 from npsem.scm_bandits import SCM_to_bandit_machine, arms_of
 from npsem.utils import subseq
@@ -97,7 +97,7 @@ def run_discovery_bandit_experiment(
 
     # Step 2: Causal Discovery
     print("\n2. Running FCI algorithm for causal discovery...")
-    A_cpdag_cl, dags, pomis_union, mis_union = run_causal_discovery_pipeline_UC(
+    pag, admgs, pomis_union, mis_union = run_causal_discovery_pipeline_UC(
         data,
         var_names,
         ind_test="fisherz",
@@ -106,9 +106,9 @@ def run_discovery_bandit_experiment(
         ground_truth_scm=ground_truth_scm,
         save_dir=save_dir,
     )
-    print("   Discovered CPDAG adjacency matrix:")
-    print(f"   {A_cpdag_cl}")
-    print(f"   Found {len(dags)} DAGs in the MEC")
+    print("   Discovered PAG adjacency matrix:")
+    print(f"   {pag}")
+    print(f"   Found {len(admgs)} ADMGs consistent with PAG")
     print(f"   POMIS union: {pomis_union}")
     print(f"   MIS union: {mis_union}")
 
@@ -222,8 +222,8 @@ def run_discovery_bandit_experiment(
             "var_names": var_names,
         },
         "discovery": {
-            "cpdag": A_cpdag_cl,
-            "dags": dags,
+            "pag": pag,
+            "admgs": admgs,
             "pomis_union": pomis_union,
             "mis_union": mis_union,
         },
@@ -298,8 +298,8 @@ def create_visualizations(
 
 def main():
     """Run the complete integrated pipeline demonstration."""
-    print("🚀 Starting Causal Discovery + Bandit Experiment Pipeline")
-    print("   (Ground Truth → Data → MEC → POMIS Union → Bandit Tests)")
+    print("🚀 Starting FCI Causal Discovery + Bandit Experiment Pipeline")
+    print("   (Ground Truth → Data → PAG → ADMGs → POMIS Union → Bandit Tests)")
 
     # Step 1: Choose ground truth SCM (chain: Z -> X -> Y)
     print("\n📊 Setting up ground truth SCM...")
@@ -327,7 +327,7 @@ def main():
     print("\n📈 EXPERIMENT SUMMARY")
     print("-" * 40)
     print(f"Ground truth SCM: {ground_truth_scm.G}")
-    print(f"Discovered {len(results['discovery']['dags'])} DAGs in MEC")
+    print(f"Discovered {len(results['discovery']['admgs'])} ADMGs consistent with PAG")
     print(f"POMIS union size: {len(results['discovery']['pomis_union'])}")
     print(f"POMIS union: {results['discovery']['pomis_union']}")
     print(f"MIS union size: {len(results['discovery']['mis_union'])}")

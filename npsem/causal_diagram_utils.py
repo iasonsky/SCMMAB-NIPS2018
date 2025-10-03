@@ -74,6 +74,56 @@ def cpdag_to_CausalDiagram(A: np.ndarray, names: List[str]) -> CausalDiagram:
     return CausalDiagram(V, dir_edges, bidirected_edges)
 
 
+def admgmatrix_to_CausalDiagram(A: np.ndarray, names: List[str]) -> CausalDiagram:
+    """
+    Convert ADMG adjacency matrix to CausalDiagram object.
+
+    ADMG encoding:
+    - 0: no edge
+    - 1: directed edge i -> j
+    - 100: bidirected edge i <-> j (latent confounder)
+    - 101: both directed and bidirected edges
+
+    Parameters:
+    -----------
+    A : np.ndarray
+        ADMG adjacency matrix
+    names : List[str]
+        Variable names
+
+    Returns:
+    --------
+    CausalDiagram
+        CausalDiagram object representing the ADMG
+    """
+    V = set(names)
+    dir_edges = []
+    bidir_edges_set = set()
+
+    for i in range(len(names)):
+        for j in range(len(names)):
+            if i == j:
+                continue
+
+            val = A[i, j]
+
+            # Directed edge i -> j
+            if val == 1 or val == 101:
+                dir_edges.append((names[i], names[j]))
+
+            # Bidirected edge i <-> j
+            if val == 100 or val == 101:
+                # Only add once (avoid duplicates)
+                edge_key = tuple(sorted([names[i], names[j]]))
+                if edge_key not in bidir_edges_set:
+                    bidir_edges_set.add(edge_key)
+
+    # Convert bidirected edges to 3-tuple format
+    bidirected_edges = [(v1, v2, f"U_{v1}_{v2}") for v1, v2 in bidir_edges_set]
+
+    return CausalDiagram(V, dir_edges, bidirected_edges)
+
+
 def causal_diagram_to_adjacency(cd: CausalDiagram, names: List[str]) -> np.ndarray:
     """
     Convert CausalDiagram to adjacency matrix.

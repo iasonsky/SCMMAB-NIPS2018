@@ -15,7 +15,12 @@ from npsem.causal_discovery import (
     fci_pag_adjacency,
 )
 from npsem.dag_enumeration import enumerate_dags_from_cpdag
-from npsem.pomis_analysis import pomis_union_over_dags, mis_union_over_dags
+from npsem.pomis_analysis import (
+    pomis_union_over_dags,
+    mis_union_over_dags,
+    pomis_union_over_admgs,
+    mis_union_over_admgs,
+)
 from npsem.causal_visualization import (
     create_combined_sanity_check_visualization,
 )
@@ -51,16 +56,19 @@ def run_causal_discovery_pipeline_UC(
         print(f"   PAG matrix:\n{pag_cl}")
 
     # Step 2: Convert PAG to ADMGs
-    admgs = pag_to_admg(pag_cl, var_names, edges)
+    admgs = pag_to_admg(
+        pag_cl, var_names, edges
+    )  # TODO: need to fix this for four_variable_SCM_strong
+    # TODO: Also for frontdoor_SCM_strong it crashes because of fisherz test (need to fix this)
     if sanity_check:
         print("\n2️⃣ ADMG Enumeration Complete")
         print(f"   Found {len(admgs)} ADMGs consistent with PAG")
 
     # Step 3: Compute POMIS union over ADMGs
-    # For now, we'll use a placeholder since we need to implement ADMG POMIS analysis
-    pomis_union = set()  # TODO: Implement pomis_union_over_admgs
-    mis_union = set()  # TODO: Implement mis_union_over_admgs
+    pomis_union = pomis_union_over_admgs(admgs, var_names, Y, enforce_Y_sink=True)
 
+    # Step 4: Compute MIS union over ADMGs
+    mis_union = mis_union_over_admgs(admgs, var_names, Y, enforce_Y_sink=True)
     if sanity_check:
         print("\n3️⃣ POMIS Analysis Complete")
         print(f"   POMIS Union: {pomis_union}")
