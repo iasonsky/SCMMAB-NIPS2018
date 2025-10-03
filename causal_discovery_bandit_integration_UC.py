@@ -100,7 +100,7 @@ def run_discovery_bandit_experiment(
     pag, admgs, pomis_union, mis_union = run_causal_discovery_pipeline_UC(
         data,
         var_names,
-        ind_test="fisherz",
+        ind_test="chisq",
         alpha=alpha,
         sanity_check=True,
         ground_truth_scm=ground_truth_scm,

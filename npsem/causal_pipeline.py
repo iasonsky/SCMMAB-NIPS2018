@@ -31,7 +31,7 @@ def run_causal_discovery_pipeline_UC(
     data: np.ndarray,
     var_names: List[str],
     alpha: float = 0.05,
-    ind_test: str = "fisherz",
+    ind_test: str = "chisq",
     Y: str = "Y",
     sanity_check: bool = False,
     ground_truth_scm: Optional[object] = None,

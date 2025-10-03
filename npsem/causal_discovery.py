@@ -17,7 +17,7 @@ def fci_pag_adjacency(
     data: np.ndarray,
     names: List[str],
     alpha: float = 0.05,
-    ind_test: str = "fisherz",
+    ind_test: str = "chisq",
     save_plot: bool = True,
 ) -> Tuple[np.ndarray, List[str], List[Tuple[str, str]]]:
     """
